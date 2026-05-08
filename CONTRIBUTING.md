@@ -1,3 +1,7 @@
+<p align="right">
+  <b>English</b> | <a href="CONTRIBUTING.zh-CN.md">简体中文</a>
+</p>
+
 # Contributing
 
 Thank you for your interest in contributing to Archon!
