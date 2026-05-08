@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import {
   Globe,
   Terminal,
@@ -50,6 +51,7 @@ function StepProgress({
   run: DashboardRunResponse;
   liveState: WorkflowState | undefined;
 }): React.ReactElement | null {
+  const { t } = useTranslation();
   const dagNodes = liveState?.dagNodes ?? [];
   const runningNode = dagNodes
     .slice()
@@ -68,7 +70,9 @@ function StepProgress({
       {hasProgress && (
         <div className="flex items-center gap-2 text-sm text-text-primary">
           <span className="font-medium">
-            {`${String(completedCount)}${totalNodes ? `/${String(totalNodes)}` : ''} nodes`}
+            {totalNodes
+              ? t('dashboard.card.nodeProgress', { completed: completedCount, total: totalNodes })
+              : t('dashboard.card.nodeProgressNoTotal', { completed: completedCount })}
           </span>
           {stepName && <span className="text-text-secondary">{stepName}</span>}
         </div>
@@ -86,7 +90,7 @@ function StepProgress({
           >
             {currentTool.status === 'running'
               ? currentTool.name
-              : `${currentTool.name} (${currentTool.durationMs ? `${(currentTool.durationMs / 1000).toFixed(1)}s` : 'done'})`}
+              : `${currentTool.name} (${currentTool.durationMs ? `${(currentTool.durationMs / 1000).toFixed(1)}s` : t('dashboard.card.toolDoneSuffix')})`}
           </span>
         </div>
       )}
@@ -113,6 +117,7 @@ function isValidNodeCounts(value: unknown): value is NodeCounts {
 }
 
 function NodeCountsSummary({ counts }: { counts: NodeCounts }): React.ReactElement {
+  const { t } = useTranslation();
   const hasFailures = counts.failed > 0 || counts.skipped > 0;
   return (
     <div className="flex items-center gap-1.5 text-xs">
@@ -122,13 +127,17 @@ function NodeCountsSummary({ counts }: { counts: NodeCounts }): React.ReactEleme
         <CheckCircle className="h-3.5 w-3.5 text-success shrink-0" />
       )}
       <span className={hasFailures ? 'text-warning' : 'text-success'}>
-        {String(counts.completed)}/{String(counts.total)} nodes succeeded
+        {t('dashboard.card.nodesSucceeded', { completed: counts.completed, total: counts.total })}
       </span>
       {counts.failed > 0 && (
-        <span className="text-text-secondary">&middot; {String(counts.failed)} failed</span>
+        <span className="text-text-secondary">
+          · {t('dashboard.card.nodesFailed', { count: counts.failed })}
+        </span>
       )}
       {counts.skipped > 0 && (
-        <span className="text-text-secondary">&middot; {String(counts.skipped)} skipped</span>
+        <span className="text-text-secondary">
+          · {t('dashboard.card.nodesSkipped', { count: counts.skipped })}
+        </span>
       )}
     </div>
   );
@@ -144,6 +153,7 @@ export function WorkflowRunCard({
   onApprove,
   onReject,
 }: WorkflowRunCardProps): React.ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [elapsed, setElapsed] = useState(() => formatDuration(run.started_at, run.completed_at));
 
@@ -217,9 +227,9 @@ export function WorkflowRunCard({
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-text-secondary">
         <span className="flex items-center gap-1">
           {PLATFORM_ICONS[run.platform_type ?? ''] ?? <Globe className="h-3.5 w-3.5" />}
-          {run.platform_type ?? 'unknown'}
+          {run.platform_type ?? t('dashboard.card.platformUnknown')}
         </span>
-        <span>{run.codebase_name ?? 'Unknown project'}</span>
+        <span>{run.codebase_name ?? t('dashboard.card.unknownProject')}</span>
         {run.parent_platform_id && run.parent_platform_id !== run.worker_platform_id && (
           <button
             onClick={(): void => {
@@ -228,7 +238,7 @@ export function WorkflowRunCard({
             className="flex items-center gap-1 text-primary/80 hover:text-primary transition-colors"
           >
             <MessageSquare className="h-3 w-3" />
-            Parent chat
+            {t('dashboard.card.parentChat')}
           </button>
         )}
       </div>
@@ -246,7 +256,7 @@ export function WorkflowRunCard({
               }}
               className="text-[10px] text-text-tertiary hover:text-text-secondary underline"
             >
-              {messageExpanded ? 'Show less' : 'Show more'}
+              {messageExpanded ? t('chat.messageList.showLess') : t('chat.messageList.showMore')}
             </button>
           )}
         </div>
@@ -261,7 +271,7 @@ export function WorkflowRunCard({
               run.metadata.approval as {
                 message?: string;
               }
-            )?.message ?? 'Waiting for approval'}
+            )?.message ?? t('chat.progress.waitingForApproval')}
           </p>
         </div>
       )}
@@ -269,7 +279,7 @@ export function WorkflowRunCard({
       {/* Working path */}
       {run.working_path && (
         <p className="text-[11px] text-text-tertiary truncate">
-          Worktree: {run.working_path.split('/').pop()}
+          {t('dashboard.card.worktreeLabel', { path: run.working_path.split('/').pop() ?? '' })}
         </p>
       )}
 
@@ -282,7 +292,7 @@ export function WorkflowRunCard({
           className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-text-secondary hover:bg-surface-elevated hover:text-text-primary transition-colors"
         >
           <FileText className="h-3.5 w-3.5" />
-          View Logs
+          {t('dashboard.card.viewLogs')}
         </button>
         {chatId && (
           <button
@@ -292,7 +302,7 @@ export function WorkflowRunCard({
             className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-text-secondary hover:bg-surface-elevated hover:text-text-primary transition-colors"
           >
             <MessageSquare className="h-3.5 w-3.5" />
-            Open Chat
+            {t('dashboard.card.openChat')}
           </button>
         )}
         {run.working_path && !isDocker && (
@@ -303,7 +313,7 @@ export function WorkflowRunCard({
             className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-text-secondary hover:bg-surface-elevated hover:text-text-primary transition-colors"
           >
             <ExternalLink className="h-3.5 w-3.5" />
-            Open in IDE
+            {t('dashboard.card.openInIde')}
           </a>
         )}
         <div className="ml-auto flex items-center gap-1">
@@ -315,7 +325,7 @@ export function WorkflowRunCard({
               className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-success/80 hover:bg-success/10 hover:text-success transition-colors"
             >
               <CheckCircle className="h-3.5 w-3.5" />
-              Approve
+              {t('dashboard.card.approve')}
             </button>
           )}
           {run.status === 'paused' && onReject && (
@@ -323,10 +333,10 @@ export function WorkflowRunCard({
               trigger={
                 <button className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-error/80 hover:bg-error/10 hover:text-error transition-colors">
                   <XCircle className="h-3.5 w-3.5" />
-                  Reject
+                  {t('dashboard.card.reject')}
                 </button>
               }
-              title="Reject workflow?"
+              title={t('dashboard.card.rejectTitle')}
               description={
                 <>
                   Reject the paused workflow <strong>{run.workflow_name}</strong>. If the approval
@@ -334,10 +344,10 @@ export function WorkflowRunCard({
                   <code>$REJECTION_REASON</code>; otherwise the run is cancelled.
                 </>
               }
-              confirmLabel="Reject"
+              confirmLabel={t('dashboard.card.rejectConfirm')}
               reasonInput={{
-                label: 'Reason (optional)',
-                placeholder: 'Why are you rejecting? Visible to the on_reject prompt.',
+                label: t('dashboard.card.rejectReasonLabel'),
+                placeholder: t('dashboard.card.rejectReasonPlaceholder'),
               }}
               onConfirm={(reason): void => {
                 onReject(run.id, reason);
@@ -352,7 +362,7 @@ export function WorkflowRunCard({
               className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-primary/80 hover:bg-primary/10 hover:text-primary transition-colors"
             >
               <PlayCircle className="h-3.5 w-3.5" />
-              Resume
+              {t('dashboard.card.resume')}
             </button>
           )}
           {run.status === 'running' && onAbandon && (
@@ -360,17 +370,17 @@ export function WorkflowRunCard({
               trigger={
                 <button className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-warning/80 hover:bg-warning/10 hover:text-warning transition-colors">
                   <Ban className="h-3.5 w-3.5" />
-                  Abandon
+                  {t('dashboard.card.abandon')}
                 </button>
               }
-              title="Abandon workflow?"
+              title={t('dashboard.card.abandonTitle')}
               description={
                 <>
                   Mark <strong>{run.workflow_name}</strong> as cancelled. Already-completed nodes
                   remain in the database; the run will not continue.
                 </>
               }
-              confirmLabel="Abandon"
+              confirmLabel={t('dashboard.card.abandonConfirm')}
               onConfirm={(): void => {
                 onAbandon(run.id);
               }}
@@ -381,17 +391,17 @@ export function WorkflowRunCard({
               trigger={
                 <button className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-error/80 hover:bg-error/10 hover:text-error transition-colors">
                   <XCircle className="h-3.5 w-3.5" />
-                  Cancel
+                  {t('dashboard.card.cancel')}
                 </button>
               }
-              title="Cancel workflow?"
+              title={t('dashboard.card.cancelTitle')}
               description={
                 <>
                   Cancel <strong>{run.workflow_name}</strong>. The run will be marked as cancelled
                   and any in-flight subprocess will be terminated.
                 </>
               }
-              confirmLabel="Cancel workflow"
+              confirmLabel={t('dashboard.card.cancelConfirm')}
               onConfirm={(): void => {
                 onCancel(run.id);
               }}
@@ -402,17 +412,17 @@ export function WorkflowRunCard({
               trigger={
                 <button className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-text-tertiary hover:bg-error/10 hover:text-error transition-colors">
                   <Trash2 className="h-3.5 w-3.5" />
-                  Delete
+                  {t('dashboard.card.delete')}
                 </button>
               }
-              title="Delete workflow run?"
+              title={t('dashboard.card.deleteTitle')}
               description={
                 <>
                   Permanently delete the run record for <strong>{run.workflow_name}</strong> and its
                   events. This cannot be undone.
                 </>
               }
-              confirmLabel="Delete"
+              confirmLabel={t('dashboard.card.deleteConfirm')}
               onConfirm={(): void => {
                 onDelete(run.id);
               }}

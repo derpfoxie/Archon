@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -69,9 +70,10 @@ function ProviderField({
   onUpdate: (updates: Partial<DagNodeData>) => void;
   selectClass: string;
 }): React.ReactElement {
+  const { t } = useTranslation();
   const { providers } = useProviders();
   return (
-    <Field label="Provider">
+    <Field label={t('workflowsBuilder.inspector.fieldProvider')}>
       <select
         value={node.provider ?? ''}
         onChange={(e): void => {
@@ -79,7 +81,7 @@ function ProviderField({
         }}
         className={cls}
       >
-        <option value="">Inherit</option>
+        <option value="">{t('workflowsBuilder.inspector.optionInherit')}</option>
         {providers.map(p => (
           <option key={p.id} value={p.id}>
             {p.displayName}
@@ -92,11 +94,11 @@ function ProviderField({
 
 type ToolsMode = 'none' | 'allow' | 'deny';
 
-const TOOLS_MODE_LABELS: Record<ToolsMode, string> = {
-  none: 'Default',
-  allow: 'Allow',
-  deny: 'Deny',
-};
+const TOOLS_MODE_KEYS = {
+  none: 'workflowsBuilder.inspector.modeDefault',
+  allow: 'workflowsBuilder.inspector.modeAllow',
+  deny: 'workflowsBuilder.inspector.modeDeny',
+} as const;
 
 function resolveToolsMode(node: DagNodeData): ToolsMode {
   if (node.allowed_tools !== undefined) return 'allow';
@@ -193,10 +195,11 @@ function GeneralTab({
   commands: CommandEntry[];
   onUpdate: (updates: Partial<DagNodeData>) => void;
 }): React.ReactElement {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-3 p-3">
       {/* Node ID */}
-      <Field label="Node ID">
+      <Field label={t('workflowsBuilder.inspector.fieldNodeId')}>
         <input
           type="text"
           value={node.id}
@@ -206,12 +209,12 @@ function GeneralTab({
           className={cn(inputClass, 'font-mono')}
         />
         <p className="text-[9px] text-warning">
-          Changing the node ID may break dependency references.
+          {t('workflowsBuilder.inspector.warningRenamingId')}
         </p>
       </Field>
 
       {/* Type selector */}
-      <Field label="Type">
+      <Field label={t('workflowsBuilder.inspector.fieldType')}>
         <select
           value={node.nodeType}
           onChange={(e): void => {
@@ -240,15 +243,15 @@ function GeneralTab({
           }}
           className={selectClass}
         >
-          <option value="command">Command</option>
-          <option value="prompt">Prompt</option>
-          <option value="bash">Bash</option>
+          <option value="command">{t('workflowsBuilder.inspector.typeCommand')}</option>
+          <option value="prompt">{t('workflowsBuilder.inspector.typePrompt')}</option>
+          <option value="bash">{t('workflowsBuilder.inspector.typeBash')}</option>
         </select>
       </Field>
 
       {/* Type-adaptive content */}
       {node.nodeType === 'command' && (
-        <Field label="Command">
+        <Field label={t('workflowsBuilder.inspector.fieldCommand')}>
           <select
             value={node.label}
             onChange={(e): void => {
@@ -256,7 +259,7 @@ function GeneralTab({
             }}
             className={selectClass}
           >
-            <option value="">Select command...</option>
+            <option value="">{t('workflowsBuilder.inspector.selectCommand')}</option>
             {commands.map(cmd => (
               <option key={cmd.name} value={cmd.name}>
                 {cmd.name}
@@ -267,14 +270,14 @@ function GeneralTab({
       )}
 
       {node.nodeType === 'prompt' && (
-        <Field label="Prompt">
+        <Field label={t('workflowsBuilder.inspector.fieldPrompt')}>
           <textarea
             value={node.promptText ?? ''}
             onChange={(e): void => {
               onUpdate({ promptText: e.target.value });
             }}
             rows={5}
-            placeholder="Enter inline prompt..."
+            placeholder={t('workflowsBuilder.inspector.promptPlaceholder')}
             className={cn(textareaClass, 'min-h-[120px]')}
           />
         </Field>
@@ -282,7 +285,7 @@ function GeneralTab({
 
       {node.nodeType === 'bash' && (
         <>
-          <Field label="Shell Script">
+          <Field label={t('workflowsBuilder.inspector.fieldShellScript')}>
             <textarea
               value={node.bashScript ?? ''}
               onChange={(e): void => {
@@ -293,7 +296,7 @@ function GeneralTab({
               className={cn(textareaClass, 'min-h-[120px]')}
             />
           </Field>
-          <Field label="Timeout (ms)">
+          <Field label={t('workflowsBuilder.inspector.fieldTimeoutMs')}>
             <input
               type="number"
               value={node.bashTimeout ?? ''}
@@ -309,7 +312,7 @@ function GeneralTab({
       )}
 
       {/* Dependencies */}
-      <Field label="Dependencies">
+      <Field label={t('workflowsBuilder.inspector.fieldDependencies')}>
         <DependencyTags
           values={node.depends_on ?? []}
           onChange={(deps): void => {
@@ -319,7 +322,7 @@ function GeneralTab({
       </Field>
 
       {/* When condition */}
-      <Field label="When Condition">
+      <Field label={t('workflowsBuilder.inspector.fieldWhenCondition')}>
         <input
           type="text"
           value={node.when ?? ''}
@@ -341,6 +344,7 @@ function ExecutionTab({
   node: DagNodeData;
   onUpdate: (updates: Partial<DagNodeData>) => void;
 }): React.ReactElement {
+  const { t } = useTranslation();
   const isBash = node.nodeType === 'bash';
 
   return (
@@ -349,19 +353,19 @@ function ExecutionTab({
         <>
           <ProviderField node={node} onUpdate={onUpdate} selectClass={selectClass} />
 
-          <Field label="Model">
+          <Field label={t('workflowsBuilder.inspector.fieldModel')}>
             <input
               type="text"
               value={node.model ?? ''}
               onChange={(e): void => {
                 onUpdate({ model: e.target.value || undefined });
               }}
-              placeholder="Inherit"
+              placeholder={t('workflowsBuilder.inspector.optionInherit')}
               className={inputClass}
             />
           </Field>
 
-          <Field label="Context">
+          <Field label={t('workflowsBuilder.inspector.fieldContext')}>
             <select
               value={node.context ?? ''}
               onChange={(e): void => {
@@ -369,14 +373,14 @@ function ExecutionTab({
               }}
               className={selectClass}
             >
-              <option value="">Inherit</option>
-              <option value="fresh">Fresh</option>
+              <option value="">{t('workflowsBuilder.inspector.optionInherit')}</option>
+              <option value="fresh">{t('workflowsBuilder.inspector.optionFresh')}</option>
             </select>
           </Field>
         </>
       )}
 
-      <Field label="Trigger Rule">
+      <Field label={t('workflowsBuilder.inspector.fieldTriggerRule')}>
         <select
           value={node.trigger_rule ?? ''}
           onChange={(e): void => {
@@ -386,7 +390,7 @@ function ExecutionTab({
           }}
           className={selectClass}
         >
-          <option value="">Default (all_success)</option>
+          <option value="">{t('workflowsBuilder.inspector.optionDefaultTriggerRule')}</option>
           {TRIGGER_RULES.map(rule => (
             <option key={rule} value={rule}>
               {rule}
@@ -395,7 +399,7 @@ function ExecutionTab({
         </select>
       </Field>
 
-      <Field label="Idle Timeout (ms)">
+      <Field label={t('workflowsBuilder.inspector.fieldIdleTimeout')}>
         <input
           type="number"
           value={node.idle_timeout ?? ''}
@@ -410,10 +414,10 @@ function ExecutionTab({
 
       {/* Retry config */}
       <div className="border-t border-border pt-3 mt-1">
-        <p className={cn(labelClass, 'mb-2')}>Retry Configuration</p>
+        <p className={cn(labelClass, 'mb-2')}>{t('workflowsBuilder.inspector.retryConfig')}</p>
 
         <div className="flex flex-col gap-2">
-          <Field label="Max Attempts (1-5)">
+          <Field label={t('workflowsBuilder.inspector.fieldMaxAttempts')}>
             <input
               type="number"
               min={1}
@@ -438,7 +442,7 @@ function ExecutionTab({
             />
           </Field>
 
-          <Field label="Delay (ms, 1000-60000)">
+          <Field label={t('workflowsBuilder.inspector.fieldDelay')}>
             <input
               type="number"
               min={1000}
@@ -461,7 +465,7 @@ function ExecutionTab({
             />
           </Field>
 
-          <Field label="On Error">
+          <Field label={t('workflowsBuilder.inspector.fieldOnError')}>
             <select
               value={node.retry?.on_error ?? ''}
               onChange={(e): void => {
@@ -477,7 +481,7 @@ function ExecutionTab({
               disabled={!node.retry}
               className={cn(selectClass, !node.retry && 'opacity-50')}
             >
-              <option value="">Default (transient)</option>
+              <option value="">{t('workflowsBuilder.inspector.optionDefaultOnError')}</option>
               <option value="transient">transient</option>
               <option value="all">all</option>
             </select>
@@ -488,14 +492,14 @@ function ExecutionTab({
   );
 }
 
-const TOOL_PRESETS: readonly {
-  label: string;
-  allowed: string[];
-}[] = [
-  { label: 'No tools', allowed: [] },
-  { label: 'Read-only', allowed: ['Read', 'Glob', 'Grep'] },
-  { label: 'Edit-only', allowed: ['Read', 'Write', 'Edit', 'Glob', 'Grep'] },
-];
+const TOOL_PRESETS = [
+  { key: 'workflowsBuilder.inspector.presetNoTools', allowed: [] as string[] },
+  { key: 'workflowsBuilder.inspector.presetReadOnly', allowed: ['Read', 'Glob', 'Grep'] },
+  {
+    key: 'workflowsBuilder.inspector.presetEditOnly',
+    allowed: ['Read', 'Write', 'Edit', 'Glob', 'Grep'],
+  },
+] as const;
 
 function ToolsTab({
   node,
@@ -504,6 +508,7 @@ function ToolsTab({
   node: DagNodeData;
   onUpdate: (updates: Partial<DagNodeData>) => void;
 }): React.ReactElement {
+  const { t } = useTranslation();
   const currentMode = resolveToolsMode(node);
 
   const handleModeChange = (mode: ToolsMode): void => {
@@ -518,7 +523,7 @@ function ToolsTab({
 
   return (
     <div className="flex flex-col gap-3 p-3">
-      <Field label="Mode">
+      <Field label={t('workflowsBuilder.inspector.fieldMode')}>
         <div className="flex gap-1">
           {(['none', 'allow', 'deny'] as const).map(mode => (
             <button
@@ -534,30 +539,30 @@ function ToolsTab({
                   : 'bg-surface-elevated text-text-secondary hover:text-text-primary'
               )}
             >
-              {TOOLS_MODE_LABELS[mode]}
+              {t(TOOLS_MODE_KEYS[mode])}
             </button>
           ))}
         </div>
       </Field>
 
-      <Field label="Presets">
+      <Field label={t('workflowsBuilder.inspector.fieldPresets')}>
         <div className="flex flex-wrap gap-1">
           {TOOL_PRESETS.map(preset => (
             <button
-              key={preset.label}
+              key={preset.key}
               type="button"
               onClick={(): void => {
-                onUpdate({ allowed_tools: preset.allowed, denied_tools: undefined });
+                onUpdate({ allowed_tools: [...preset.allowed], denied_tools: undefined });
               }}
               className="rounded-full border border-border px-2 py-0.5 text-[10px] text-text-secondary hover:text-text-primary hover:border-accent transition-colors"
             >
-              {preset.label}
+              {t(preset.key)}
             </button>
           ))}
         </div>
       </Field>
 
-      <Field label="Allowed Tools">
+      <Field label={t('workflowsBuilder.inspector.fieldAllowedTools')}>
         <input
           type="text"
           value={node.allowed_tools?.join(', ') ?? ''}
@@ -569,7 +574,7 @@ function ToolsTab({
         />
       </Field>
 
-      <Field label="Denied Tools">
+      <Field label={t('workflowsBuilder.inspector.fieldDeniedTools')}>
         <input
           type="text"
           value={node.denied_tools?.join(', ') ?? ''}
@@ -646,10 +651,11 @@ function AdvancedTab({
   node: DagNodeData;
   onUpdate: (updates: Partial<DagNodeData>) => void;
 }): React.ReactElement {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-3 p-3">
       <JsonTextareaField
-        label="Output Format (JSON Schema)"
+        label={t('workflowsBuilder.inspector.fieldOutputFormat')}
         value={node.output_format}
         placeholder='{"type": "object", "properties": {...}}'
         rows={5}
@@ -658,7 +664,7 @@ function AdvancedTab({
         }}
       />
 
-      <Field label="Skills">
+      <Field label={t('workflowsBuilder.inspector.fieldSkills')}>
         <input
           type="text"
           value={node.skills?.join(', ') ?? ''}
@@ -670,7 +676,7 @@ function AdvancedTab({
         />
       </Field>
 
-      <Field label="MCP Config Path">
+      <Field label={t('workflowsBuilder.inspector.fieldMcpPath')}>
         <input
           type="text"
           value={node.mcp ?? ''}
@@ -680,13 +686,11 @@ function AdvancedTab({
           placeholder=".archon/mcp/github.json"
           className={cn(inputClass, 'font-mono')}
         />
-        <p className="text-[9px] text-text-tertiary">
-          Path relative to repo root. JSON matching SDK McpServerConfig format.
-        </p>
+        <p className="text-[9px] text-text-tertiary">{t('workflowsBuilder.inspector.mcpHelp')}</p>
       </Field>
 
       <JsonTextareaField
-        label="Hooks (SDK SyncHookJSONOutput)"
+        label={t('workflowsBuilder.inspector.fieldHooks')}
         value={node.hooks as Record<string, unknown> | undefined}
         placeholder='{"PreToolUse": [{"matcher": "Bash", "response": {...}}]}'
         rows={5}
@@ -705,6 +709,7 @@ function DagInspector({
   onDelete,
   onClose,
 }: NodeInspectorProps): React.ReactElement {
+  const { t } = useTranslation();
   const isBash = node.nodeType === 'bash';
 
   return (
@@ -719,15 +724,15 @@ function DagInspector({
           size="sm"
           onClick={onDelete}
           className="h-6 shrink-0 px-2 text-[10px]"
-          aria-label="Delete node"
+          aria-label={t('workflowsBuilder.inspector.deleteNode')}
         >
-          Delete
+          {t('workflowsBuilder.inspector.delete')}
         </Button>
         <button
           type="button"
           onClick={onClose}
           className="shrink-0 px-1 text-sm leading-none text-text-tertiary hover:text-text-primary"
-          title="Close inspector"
+          title={t('workflowsBuilder.inspector.closeInspector')}
         >
           x
         </button>
@@ -737,19 +742,19 @@ function DagInspector({
       <Tabs defaultValue="general" className="flex-1 flex flex-col gap-0">
         <TabsList variant="line" className="px-2 pt-1 w-full justify-start">
           <TabsTrigger value="general" className="text-xs">
-            General
+            {t('workflowsBuilder.inspector.tabGeneral')}
           </TabsTrigger>
           <TabsTrigger value="execution" className="text-xs">
-            Execution
+            {t('workflowsBuilder.inspector.tabExecution')}
           </TabsTrigger>
           {!isBash && (
             <TabsTrigger value="tools" className="text-xs">
-              Tools
+              {t('workflowsBuilder.inspector.tabTools')}
             </TabsTrigger>
           )}
           {!isBash && (
             <TabsTrigger value="advanced" className="text-xs">
-              Advanced
+              {t('workflowsBuilder.inspector.tabAdvanced')}
             </TabsTrigger>
           )}
         </TabsList>

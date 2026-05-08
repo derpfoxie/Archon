@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import type { WorkflowDefinition, DagNode } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
@@ -177,13 +178,14 @@ export function serializeToYaml(def: WorkflowDefinition): string {
 }
 
 export function YamlCodeView({ definition, mode }: YamlCodeViewProps): React.ReactElement {
+  const { t } = useTranslation();
   const yamlText = definition ? serializeToYaml(definition) : '';
 
   return (
     <div className="flex h-full flex-col bg-surface-inset">
       {mode === 'full' && (
         <div className="flex items-center border-b border-border px-3 py-2">
-          <span className="text-xs text-text-tertiary">Read-only YAML preview</span>
+          <span className="text-xs text-text-tertiary">{t('workflowsBuilder.yaml.header')}</span>
         </div>
       )}
       <pre
@@ -193,7 +195,7 @@ export function YamlCodeView({ definition, mode }: YamlCodeViewProps): React.Rea
           'whitespace-pre-wrap break-words'
         )}
       >
-        {yamlText || '# No workflow definition'}
+        {yamlText || t('workflowsBuilder.yaml.empty')}
       </pre>
     </div>
   );

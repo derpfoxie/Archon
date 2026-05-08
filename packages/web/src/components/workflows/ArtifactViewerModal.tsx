@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
@@ -74,6 +75,7 @@ export function ArtifactViewerModal({
   runId,
   filename,
 }: ArtifactViewerModalProps): React.ReactElement {
+  const { t } = useTranslation();
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -91,20 +93,24 @@ export function ArtifactViewerModal({
       try {
         const res = await fetch(`/api/artifacts/${encodeURIComponent(runId)}/${encodedFilename}`);
         if (!res.ok) {
-          const body = await res.json().catch(() => ({ error: 'Failed to load artifact' }));
-          throw new Error((body as { error?: string }).error ?? 'Failed to load artifact');
+          const body = await res
+            .json()
+            .catch(() => ({ error: t('workflowsExecution.artifacts.loadFailed') }));
+          throw new Error(
+            (body as { error?: string }).error ?? t('workflowsExecution.artifacts.loadFailed')
+          );
         }
         setContent(await res.text());
       } catch (err: unknown) {
         console.error('[ArtifactViewerModal] fetch failed', { runId, filename, err });
-        setError(err instanceof Error ? err.message : 'Failed to load artifact');
+        setError(err instanceof Error ? err.message : t('workflowsExecution.artifacts.loadFailed'));
       } finally {
         setLoading(false);
       }
     }
 
     void loadArtifact();
-  }, [open, runId, filename]);
+  }, [open, runId, filename, t]);
 
   const basename = filename.split('/').pop() ?? filename;
   const isMarkdown = basename.endsWith('.md') || basename.endsWith('.mdx');
@@ -116,7 +122,11 @@ export function ArtifactViewerModal({
           <DialogTitle>{basename}</DialogTitle>
         </DialogHeader>
         <div className="flex-1 overflow-auto min-h-0">
-          {loading && <p className="text-sm text-text-secondary animate-pulse">Loading…</p>}
+          {loading && (
+            <p className="text-sm text-text-secondary animate-pulse">
+              {t('workflowsExecution.artifacts.loading')}
+            </p>
+          )}
           {error && <p className="text-sm text-error">{error}</p>}
           {content !== null &&
             (isMarkdown ? (

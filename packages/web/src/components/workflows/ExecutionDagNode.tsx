@@ -1,4 +1,5 @@
 import { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Handle, Position } from '@xyflow/react';
 import type { NodeProps, Node } from '@xyflow/react';
 import type { DagNodeData } from './DagNodeComponent';
@@ -40,6 +41,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 function ExecutionDagNodeRender({ data }: NodeProps<ExecutionFlowNode>): React.ReactElement {
+  const { t } = useTranslation();
   const style = (data.status && STATUS_STYLES[data.status]) ?? DEFAULT_STYLE;
   const typeLabel = TYPE_LABELS[data.nodeType] ?? 'PROMPT';
 
@@ -66,7 +68,8 @@ function ExecutionDagNodeRender({ data }: NodeProps<ExecutionFlowNode>): React.R
       </div>
       {data.currentIteration !== undefined && data.maxIterations !== undefined && (
         <div className="text-[10px] text-text-tertiary mt-0.5">
-          {data.currentIteration}/{data.maxIterations} iterations
+          {data.currentIteration}/{data.maxIterations}{' '}
+          {t('workflowsExecution.dag.iterationsSuffix')}
         </div>
       )}
       {data.error && (

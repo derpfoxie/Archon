@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -55,6 +56,7 @@ export function WorkflowDagViewer({
   selectedNodeId,
   onNodeClick,
 }: WorkflowDagViewerProps): React.ReactElement {
+  const { t } = useTranslation();
   // Compute topology layout ONCE from the workflow definition.
   // Only re-layout when the definition changes (node/edge count), not on status updates.
   const { baseNodes, edges: layoutedEdges } = useMemo(() => {
@@ -115,7 +117,7 @@ export function WorkflowDagViewer({
       {isRunning && currentlyExecuting && (
         <div className="absolute top-3 right-3 z-10 flex items-center gap-2 rounded-md bg-surface/90 backdrop-blur-sm border border-border px-3 py-1.5 text-xs">
           <span className="inline-block w-2 h-2 rounded-full bg-accent-bright animate-pulse" />
-          <span className="text-text-secondary">Executing:</span>
+          <span className="text-text-secondary">{t('workflowsExecution.dag.executing')}</span>
           <span className="font-medium text-text-primary">{currentlyExecuting.nodeName}</span>
           <span className="text-text-tertiary">
             {formatDurationMs(Date.now() - currentlyExecuting.startedAt)}

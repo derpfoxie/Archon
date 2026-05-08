@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { StatusIcon } from './StatusIcon';
 import { formatDurationMs } from '@/lib/format';
 import type { DagNodeState } from '@/lib/types';
@@ -18,6 +19,7 @@ function DagNodeItem({
   isActive: boolean;
   onNodeClick: (nodeId: string) => void;
 }): React.ReactElement {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const hasIterations = (node.iterations?.length ?? 0) > 0;
 
@@ -41,7 +43,11 @@ function DagNodeItem({
                 setExpanded(prev => !prev);
               }}
               className="text-text-tertiary hover:text-text-secondary shrink-0 text-xs cursor-pointer"
-              aria-label={expanded ? 'Collapse iterations' : 'Expand iterations'}
+              aria-label={
+                expanded
+                  ? t('workflowsExecution.dag.collapseIterations')
+                  : t('workflowsExecution.dag.expandIterations')
+              }
             >
               {expanded ? '\u25BC' : '\u25B6'}
             </button>
@@ -66,7 +72,7 @@ function DagNodeItem({
         )}
         {node.reason && (
           <div className="text-xs text-text-tertiary mt-0.5 ml-6">
-            Skipped: {node.reason.replace(/_/g, ' ')}
+            {t('workflowsExecution.dag.skipped', { reason: node.reason.replace(/_/g, ' ') })}
           </div>
         )}
       </div>
@@ -75,7 +81,9 @@ function DagNodeItem({
           {(node.iterations ?? []).map(iter => (
             <div key={iter.iteration} className="flex items-center gap-2 px-2 py-1 text-xs">
               <StatusIcon status={iter.status} />
-              <span className="text-text-secondary flex-1">Iteration {iter.iteration}</span>
+              <span className="text-text-secondary flex-1">
+                {t('workflowsExecution.dag.iterationLabel', { n: iter.iteration })}
+              </span>
               {iter.duration !== undefined && (
                 <span className="text-text-tertiary">{formatDurationMs(iter.duration)}</span>
               )}
@@ -92,9 +100,12 @@ export function DagNodeProgress({
   activeNodeId,
   onNodeClick,
 }: DagNodeProgressProps): React.ReactElement {
+  const { t } = useTranslation();
   if (nodes.length === 0) {
     return (
-      <div className="p-3 text-xs text-text-secondary italic">No DAG node events recorded.</div>
+      <div className="p-3 text-xs text-text-secondary italic">
+        {t('workflowsExecution.dag.noEvents')}
+      </div>
     );
   }
 

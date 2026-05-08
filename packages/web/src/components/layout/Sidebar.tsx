@@ -1,5 +1,6 @@
 import { useState, useRef, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Plus, Loader2, ChevronDown, FolderGit2, MessageSquarePlus } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -32,6 +33,7 @@ function getInitialWidth(): number {
 }
 
 export function Sidebar(): React.ReactElement {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
   const [width, setWidth] = useState(getInitialWidth);
@@ -189,7 +191,7 @@ export function Sidebar(): React.ReactElement {
         <SearchBar
           value={searchQuery}
           onChange={setSearchQuery}
-          placeholder="Search..."
+          placeholder={t('sidebarChat.searchPlaceholder')}
           inputRef={searchInputRef}
         />
       </div>
@@ -201,7 +203,7 @@ export function Sidebar(): React.ReactElement {
           className="flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-text-secondary hover:bg-surface-elevated hover:text-text-primary transition-colors"
         >
           <MessageSquarePlus className="h-4 w-4 shrink-0" />
-          New Chat
+          {t('sidebarChat.newChat')}
         </button>
       </div>
 
@@ -211,7 +213,7 @@ export function Sidebar(): React.ReactElement {
       <div className="px-2 py-2">
         <div className="flex items-center justify-between px-1">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-text-tertiary">
-            Projects
+            {t('sidebarChat.projects')}
           </span>
           <button
             onClick={(): void => {
@@ -220,7 +222,7 @@ export function Sidebar(): React.ReactElement {
               setAddValue('');
             }}
             className="p-1 rounded hover:bg-surface-elevated transition-colors"
-            title="Add project"
+            title={t('sidebarChat.addProject')}
           >
             <Plus className="h-4 w-4 text-text-tertiary hover:text-primary" />
           </button>
@@ -242,7 +244,7 @@ export function Sidebar(): React.ReactElement {
                     setShowAddInput(false);
                   }
                 }}
-                placeholder="GitHub URL or local path"
+                placeholder={t('sidebarChat.addProjectPlaceholder')}
                 disabled={addLoading}
                 className="w-full rounded-md border border-border bg-surface-elevated px-2 py-1 text-xs text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none disabled:opacity-50"
               />
@@ -256,7 +258,9 @@ export function Sidebar(): React.ReactElement {
           {selectedProjectId && !projectsExpanded ? (
             <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-3 py-1.5 mt-1 text-left text-sm text-primary hover:bg-surface-elevated transition-colors">
               <FolderGit2 className="h-4 w-4 shrink-0" />
-              <span className="truncate flex-1">{selectedProject?.name ?? 'Project'}</span>
+              <span className="truncate flex-1">
+                {selectedProject?.name ?? t('sidebarChat.projectFallback')}
+              </span>
               <ChevronDown className="h-3.5 w-3.5 shrink-0 text-text-tertiary" />
             </CollapsibleTrigger>
           ) : (
@@ -287,7 +291,7 @@ export function Sidebar(): React.ReactElement {
           </div>
         )}
         {isErrorCodebases && (
-          <p className="px-2 text-[10px] text-error mt-1">Failed to load projects — retrying</p>
+          <p className="px-2 text-[10px] text-error mt-1">{t('sidebarChat.loadProjectsRetry')}</p>
         )}
       </div>
 

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { listConversations, listWorkflowRuns } from '@/lib/api';
 import type { CodebaseResponse } from '@/lib/api';
 import { ConversationItem } from '@/components/conversations/ConversationItem';
@@ -13,6 +14,7 @@ interface AllConversationsViewProps {
 export function AllConversationsView({
   searchQuery,
 }: AllConversationsViewProps): React.ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { codebases } = useProject();
 
@@ -89,8 +91,8 @@ export function AllConversationsView({
           ) : (
             <span className="px-1 text-xs text-text-tertiary">
               {conversations && conversations.length > 0
-                ? 'No matching conversations'
-                : 'No conversations yet — start a new chat!'}
+                ? t('chat.noMatchingConversations')
+                : t('chat.noConversationsYet')}
             </span>
           )}
         </div>

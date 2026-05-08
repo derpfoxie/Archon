@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { WorkflowArtifact } from '@/lib/types';
 import { ArtifactViewerModal } from './ArtifactViewerModal';
 
@@ -63,6 +64,7 @@ function ArtifactIcon({ type }: { type: string }): React.ReactElement {
 }
 
 export function ArtifactSummary({ artifacts, runId }: ArtifactSummaryProps): React.ReactElement {
+  const { t } = useTranslation();
   const [viewerFilename, setViewerFilename] = useState<string | null>(null);
 
   if (artifacts.length === 0) {
@@ -73,7 +75,7 @@ export function ArtifactSummary({ artifacts, runId }: ArtifactSummaryProps): Rea
     <>
       <div className="rounded-lg border border-border bg-surface p-3">
         <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">
-          Artifacts
+          {t('workflowsExecution.artifacts.title')}
         </h4>
         <div className="space-y-1.5">
           {artifacts.map((artifact, idx) => (

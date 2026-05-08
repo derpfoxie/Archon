@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Header } from '@/components/layout/Header';
 import { MessageList } from './MessageList';
 import { MessageInput, type MessageInputHandle } from './MessageInput';
@@ -101,6 +102,7 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ conversationId }: ChatInterfaceProps): React.ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { selectedProjectId } = useProject();
@@ -203,9 +205,9 @@ export function ChatInterface({ conversationId }: ChatInterfaceProps): React.Rea
             role: 'assistant' as const,
             content: '',
             error: {
-              message: 'Failed to load message history. Try refreshing the page.',
+              message: t('chat.interface.loadMessageHistoryFailed'),
               classification: 'transient' as const,
-              suggestedActions: ['Refresh page'],
+              suggestedActions: [t('chat.interface.refreshPage')],
             },
             timestamp: Date.now(),
           },
@@ -635,9 +637,9 @@ export function ChatInterface({ conversationId }: ChatInterfaceProps): React.Rea
         } catch (error) {
           console.error('[Chat] Failed to create conversation', { error });
           onError({
-            message: 'Failed to create conversation. Please try again.',
+            message: t('chat.interface.createConversationFailed'),
             classification: 'transient',
-            suggestedActions: ['Retry'],
+            suggestedActions: [t('chat.errorRetry')],
           });
           setSendInFlight(false);
           setSending(false);
@@ -666,11 +668,11 @@ export function ChatInterface({ conversationId }: ChatInterfaceProps): React.Rea
         const userMessage =
           errMsg && /API error 4\d\d/.test(errMsg)
             ? errMsg.replace(/^API error \d+ \([^)]*\): /, '')
-            : 'Failed to send message. Please try again.';
+            : t('chat.interface.sendMessageFailed');
         onError({
           message: userMessage,
           classification: 'transient',
-          suggestedActions: ['Retry'],
+          suggestedActions: [t('chat.errorRetry')],
         });
       } finally {
         // Only clear sending UI state here. Do NOT clear setSendInFlight —
@@ -690,7 +692,7 @@ export function ChatInterface({ conversationId }: ChatInterfaceProps): React.Rea
   return (
     <div className="flex flex-1 flex-col overflow-hidden min-h-0">
       <Header
-        title={isNewChat ? 'New Chat' : headerTitle}
+        title={isNewChat ? t('chat.interface.newChatTitle') : headerTitle}
         subtitle={headerSubtitle}
         projectName={currentCodebase?.name ?? contextCodebase?.name}
         connected={isNewChat ? undefined : connected}
@@ -699,9 +701,13 @@ export function ChatInterface({ conversationId }: ChatInterfaceProps): React.Rea
       {(conversationsError || codebasesError) && (
         <div className="flex gap-2 px-4 py-1">
           {conversationsError && (
-            <span className="text-xs text-red-400">Failed to load conversations</span>
+            <span className="text-xs text-red-400">
+              {t('chat.interface.loadConversationsFailed')}
+            </span>
           )}
-          {codebasesError && <span className="text-xs text-red-400">Failed to load projects</span>}
+          {codebasesError && (
+            <span className="text-xs text-red-400">{t('chat.interface.loadProjectsFailed')}</span>
+          )}
         </div>
       )}
       <MessageList
@@ -729,7 +735,7 @@ export function ChatInterface({ conversationId }: ChatInterfaceProps): React.Rea
         }
         disabledReason={
           currentConv != null && currentConv.platform_type !== 'web'
-            ? 'Continuing chats from other platforms in the Web UI is coming soon'
+            ? t('chat.interface.platformContinuationComingSoon')
             : undefined
         }
       />

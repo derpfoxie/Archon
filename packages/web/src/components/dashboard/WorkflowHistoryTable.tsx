@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Globe, Terminal, Hash, Send, GitBranch, Trash2 } from 'lucide-react';
 import type { DashboardRunResponse } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -28,10 +29,11 @@ export function WorkflowHistoryTable({
   runs,
   onDelete,
 }: WorkflowHistoryTableProps): React.ReactElement {
+  const { t } = useTranslation();
   if (runs.length === 0) {
     return (
       <div className="flex items-center justify-center py-8">
-        <span className="text-xs text-text-tertiary">No history</span>
+        <span className="text-xs text-text-tertiary">{t('dashboard.history.empty')}</span>
       </div>
     );
   }
@@ -41,13 +43,13 @@ export function WorkflowHistoryTable({
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b border-border bg-surface-elevated text-left text-text-tertiary">
-            <th className="px-3 py-2 font-medium w-8">Status</th>
-            <th className="px-3 py-2 font-medium">Workflow</th>
-            <th className="px-3 py-2 font-medium">Project</th>
-            <th className="px-3 py-2 font-medium w-16">Source</th>
-            <th className="px-3 py-2 font-medium w-20">Duration</th>
-            <th className="px-3 py-2 font-medium w-32">Started</th>
-            <th className="px-3 py-2 font-medium w-20">Actions</th>
+            <th className="px-3 py-2 font-medium w-8">{t('dashboard.history.colStatus')}</th>
+            <th className="px-3 py-2 font-medium">{t('dashboard.history.colWorkflow')}</th>
+            <th className="px-3 py-2 font-medium">{t('dashboard.history.colProject')}</th>
+            <th className="px-3 py-2 font-medium w-16">{t('dashboard.history.colSource')}</th>
+            <th className="px-3 py-2 font-medium w-20">{t('dashboard.history.colDuration')}</th>
+            <th className="px-3 py-2 font-medium w-32">{t('dashboard.history.colStarted')}</th>
+            <th className="px-3 py-2 font-medium w-20">{t('dashboard.history.colActions')}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-border">
@@ -80,13 +82,11 @@ export function WorkflowHistoryTable({
                   </p>
                 )}
               </td>
-              <td className="px-3 py-2 text-text-secondary truncate">
-                {run.codebase_name ?? '\u2014'}
-              </td>
+              <td className="px-3 py-2 text-text-secondary truncate">{run.codebase_name ?? '—'}</td>
               <td className="px-3 py-2">
                 <span className="flex items-center gap-1 text-text-secondary">
                   {PLATFORM_ICONS[run.platform_type ?? ''] ?? null}
-                  {run.platform_type ?? '\u2014'}
+                  {run.platform_type ?? '—'}
                 </span>
               </td>
               <td className="px-3 py-2 text-text-secondary">
@@ -99,26 +99,26 @@ export function WorkflowHistoryTable({
                     to={`/workflows/runs/${run.id}`}
                     className="text-primary hover:text-primary/80 transition-colors"
                   >
-                    View Logs
+                    {t('dashboard.card.viewLogs')}
                   </Link>
                   {onDelete && (
                     <ConfirmRunActionDialog
                       trigger={
                         <button
                           className="text-text-tertiary hover:text-error transition-colors"
-                          title="Delete run"
+                          title={t('dashboard.history.deleteRun')}
                         >
                           <Trash2 className="h-3 w-3" />
                         </button>
                       }
-                      title="Delete workflow run?"
+                      title={t('dashboard.card.deleteTitle')}
                       description={
                         <>
                           Permanently delete the run record for <strong>{run.workflow_name}</strong>{' '}
                           and its events. This cannot be undone.
                         </>
                       }
-                      confirmLabel="Delete"
+                      confirmLabel={t('dashboard.card.deleteConfirm')}
                       onConfirm={(): void => {
                         onDelete(run.id);
                       }}

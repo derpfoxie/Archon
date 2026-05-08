@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Workflow } from 'lucide-react';
 import {
   listDashboardRuns,
@@ -45,6 +46,7 @@ function getDateBounds(range: DateRange): { after?: string; before?: string } {
 }
 
 export function DashboardPage(): React.ReactElement {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -284,15 +286,15 @@ export function DashboardPage(): React.ReactElement {
   }
 
   const handleCancel = (runId: string): Promise<void> =>
-    runAction(cancelWorkflowRun, runId, 'Failed to cancel workflow');
+    runAction(cancelWorkflowRun, runId, t('dashboard.errors.cancel'));
   const handleResume = (runId: string): Promise<void> =>
-    runAction(resumeWorkflowRun, runId, 'Failed to resume workflow');
+    runAction(resumeWorkflowRun, runId, t('dashboard.errors.resume'));
   const handleAbandon = (runId: string): Promise<void> =>
-    runAction(abandonWorkflowRun, runId, 'Failed to abandon workflow');
+    runAction(abandonWorkflowRun, runId, t('dashboard.errors.abandon'));
   const handleDelete = (runId: string): Promise<void> =>
-    runAction(deleteWorkflowRun, runId, 'Failed to delete workflow run');
+    runAction(deleteWorkflowRun, runId, t('dashboard.errors.delete'));
   const handleApprove = (runId: string): Promise<void> =>
-    runAction(approveWorkflowRun, runId, 'Failed to approve workflow');
+    runAction(approveWorkflowRun, runId, t('dashboard.errors.approve'));
   // Reject differs from the rest of the lifecycle actions because it takes a
   // second argument (the optional reason). Inline it rather than squeezing
   // through `runAction`'s `(id) => Promise` signature with a closure — keeps
@@ -303,7 +305,7 @@ export function DashboardPage(): React.ReactElement {
       await rejectWorkflowRun(runId, reason);
       void queryClient.invalidateQueries({ queryKey: ['dashboardRuns'] });
     } catch (err) {
-      setActionError(err instanceof Error ? err.message : 'Failed to reject workflow');
+      setActionError(err instanceof Error ? err.message : t('dashboard.errors.reject'));
     }
   }
 
@@ -315,10 +317,10 @@ export function DashboardPage(): React.ReactElement {
       <div className="flex-1 overflow-auto p-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-lg font-semibold text-text-primary">Mission Control</h1>
+          <h1 className="text-lg font-semibold text-text-primary">{t('dashboard.title')}</h1>
           {dataUpdatedAt > 0 && (
             <span className="text-xs text-text-tertiary">
-              Last updated {new Date(dataUpdatedAt).toLocaleTimeString()}
+              {t('dashboard.lastUpdated', { time: new Date(dataUpdatedAt).toLocaleTimeString() })}
             </span>
           )}
         </div>
@@ -346,26 +348,28 @@ export function DashboardPage(): React.ReactElement {
 
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <span className="text-sm text-text-tertiary">Loading...</span>
+            <span className="text-sm text-text-tertiary">{t('common.loading')}</span>
           </div>
         ) : isError ? (
           <div className="flex flex-col items-center justify-center gap-3 py-16">
             <p className="text-sm text-error">
-              Failed to load workflow runs
+              {t('dashboard.loadFailed')}
               {fetchError instanceof Error ? `: ${fetchError.message}` : ''}
             </p>
           </div>
         ) : runs.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 py-16">
             <Workflow className="h-10 w-10 text-text-tertiary" />
-            <p className="text-sm text-text-tertiary">No workflow runs found</p>
+            <p className="text-sm text-text-tertiary">{t('dashboard.noRuns')}</p>
           </div>
         ) : (
           <>
             {/* Active Workflows */}
             {activeRuns.length > 0 && (
               <section>
-                <h2 className="mb-3 text-sm font-semibold text-text-secondary">Active Workflows</h2>
+                <h2 className="mb-3 text-sm font-semibold text-text-secondary">
+                  {t('dashboard.activeWorkflows')}
+                </h2>
                 <div className="space-y-6">
                   {/* Singleton runs (1 per chat or standalone) share a single grid */}
                   {singletonRuns.length > 0 && (
@@ -407,7 +411,9 @@ export function DashboardPage(): React.ReactElement {
             {/* History */}
             {historyRuns.length > 0 && (
               <section>
-                <h2 className="mb-3 text-sm font-semibold text-text-secondary">History</h2>
+                <h2 className="mb-3 text-sm font-semibold text-text-secondary">
+                  {t('dashboard.historyTitle')}
+                </h2>
                 <WorkflowHistoryTable runs={historyRuns} onDelete={handleDelete} />
               </section>
             )}
@@ -416,8 +422,11 @@ export function DashboardPage(): React.ReactElement {
             <div className="flex items-center justify-between pt-2">
               <div className="flex items-center gap-3">
                 <span className="text-xs text-text-tertiary">
-                  Showing {String(page * pageSize + 1)}&ndash;
-                  {String(Math.min((page + 1) * pageSize, total))} of {String(total)} runs
+                  {t('dashboard.showing', {
+                    from: page * pageSize + 1,
+                    to: Math.min((page + 1) * pageSize, total),
+                    total,
+                  })}
                 </span>
                 <select
                   value={pageSize}
@@ -428,7 +437,7 @@ export function DashboardPage(): React.ReactElement {
                 >
                   {PAGE_SIZE_OPTIONS.map(size => (
                     <option key={size} value={size}>
-                      {String(size)} per page
+                      {t('dashboard.perPage', { count: size })}
                     </option>
                   ))}
                 </select>
@@ -441,10 +450,13 @@ export function DashboardPage(): React.ReactElement {
                   disabled={page === 0}
                   className="rounded-md border border-border bg-surface-elevated px-3 py-1 text-xs text-text-secondary transition-colors hover:bg-surface disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  Previous
+                  {t('dashboard.previous')}
                 </button>
                 <span className="text-xs text-text-tertiary">
-                  Page {String(page + 1)} of {String(Math.max(1, totalPages))}
+                  {t('dashboard.pagePosition', {
+                    current: page + 1,
+                    total: Math.max(1, totalPages),
+                  })}
                 </span>
                 <button
                   onClick={(): void => {
@@ -453,7 +465,7 @@ export function DashboardPage(): React.ReactElement {
                   disabled={!hasMore}
                   className="rounded-md border border-border bg-surface-elevated px-3 py-1 text-xs text-text-secondary transition-colors hover:bg-surface disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  Next
+                  {t('dashboard.next')}
                 </button>
               </div>
             </div>

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Box, FileText, Terminal, Zap, Plug, ChevronRight } from 'lucide-react';
 import type { CommandEntry } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -23,6 +24,7 @@ export function QuickAddPicker({
   onClose,
   commands,
 }: QuickAddPickerProps): React.ReactElement {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [subView, setSubView] = useState<SubView>('main');
@@ -97,12 +99,16 @@ export function QuickAddPicker({
             ←
           </button>
           <span className="text-xs font-medium text-text-secondary">
-            {isSkill ? 'Add Skill Node' : 'Add MCP Node'}
+            {isSkill
+              ? t('workflowsBuilder.quickAdd.addSkillNode')
+              : t('workflowsBuilder.quickAdd.addMcpNode')}
           </span>
         </div>
         <div className="p-3">
           <label className="text-[10px] text-text-tertiary block mb-1.5">
-            {isSkill ? 'Skill name' : 'MCP config path'}
+            {isSkill
+              ? t('workflowsBuilder.quickAdd.skillName')
+              : t('workflowsBuilder.quickAdd.mcpPath')}
           </label>
           <input
             ref={inputRef}
@@ -126,7 +132,7 @@ export function QuickAddPicker({
                 : 'bg-surface border border-border text-text-tertiary cursor-not-allowed'
             )}
           >
-            Create Node
+            {t('workflowsBuilder.quickAdd.createNode')}
           </button>
         </div>
       </div>
@@ -141,7 +147,9 @@ export function QuickAddPicker({
       className="w-56 bg-surface-elevated border border-border rounded-lg shadow-lg overflow-hidden"
     >
       <div className="px-3 py-2 border-b border-border">
-        <span className="text-xs font-medium text-text-secondary">Add Node</span>
+        <span className="text-xs font-medium text-text-secondary">
+          {t('workflowsBuilder.quickAdd.addNode')}
+        </span>
       </div>
       <div className="py-1">
         {/* Command */}
@@ -156,8 +164,12 @@ export function QuickAddPicker({
             <Box className="size-4" />
           </span>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-medium text-text-primary">Command</div>
-            <div className="text-[10px] text-text-tertiary">Run a named command</div>
+            <div className="text-xs font-medium text-text-primary">
+              {t('workflowsBuilder.quickAdd.command')}
+            </div>
+            <div className="text-[10px] text-text-tertiary">
+              {t('workflowsBuilder.quickAdd.commandDesc')}
+            </div>
           </div>
           <ChevronRight className="size-3.5 text-text-tertiary shrink-0" />
         </button>
@@ -174,8 +186,12 @@ export function QuickAddPicker({
             <FileText className="size-4" />
           </span>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-medium text-text-primary">Prompt</div>
-            <div className="text-[10px] text-text-tertiary">Inline AI prompt</div>
+            <div className="text-xs font-medium text-text-primary">
+              {t('workflowsBuilder.quickAdd.prompt')}
+            </div>
+            <div className="text-[10px] text-text-tertiary">
+              {t('workflowsBuilder.quickAdd.promptDesc')}
+            </div>
           </div>
         </button>
 
@@ -191,8 +207,12 @@ export function QuickAddPicker({
             <Terminal className="size-4" />
           </span>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-medium text-text-primary">Bash</div>
-            <div className="text-[10px] text-text-tertiary">Shell script</div>
+            <div className="text-xs font-medium text-text-primary">
+              {t('workflowsBuilder.quickAdd.bash')}
+            </div>
+            <div className="text-[10px] text-text-tertiary">
+              {t('workflowsBuilder.quickAdd.bashDesc')}
+            </div>
           </div>
         </button>
 
@@ -200,7 +220,7 @@ export function QuickAddPicker({
         <div className="my-1 mx-3 border-t border-border" />
         <div className="px-3 py-1">
           <span className="text-[10px] font-medium text-text-tertiary uppercase tracking-wider">
-            Advanced
+            {t('workflowsBuilder.quickAdd.advanced')}
           </span>
         </div>
 
@@ -216,8 +236,12 @@ export function QuickAddPicker({
             <Zap className="size-4" />
           </span>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-medium text-text-primary">Skill</div>
-            <div className="text-[10px] text-text-tertiary">Prompt + skill preloading</div>
+            <div className="text-xs font-medium text-text-primary">
+              {t('workflowsBuilder.quickAdd.skill')}
+            </div>
+            <div className="text-[10px] text-text-tertiary">
+              {t('workflowsBuilder.quickAdd.skillDesc')}
+            </div>
           </div>
           <ChevronRight className="size-3.5 text-text-tertiary shrink-0" />
         </button>
@@ -234,8 +258,12 @@ export function QuickAddPicker({
             <Plug className="size-4" />
           </span>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-medium text-text-primary">MCP</div>
-            <div className="text-[10px] text-text-tertiary">Prompt + MCP server</div>
+            <div className="text-xs font-medium text-text-primary">
+              {t('workflowsBuilder.quickAdd.mcp')}
+            </div>
+            <div className="text-[10px] text-text-tertiary">
+              {t('workflowsBuilder.quickAdd.mcpDesc')}
+            </div>
           </div>
           <ChevronRight className="size-3.5 text-text-tertiary shrink-0" />
         </button>

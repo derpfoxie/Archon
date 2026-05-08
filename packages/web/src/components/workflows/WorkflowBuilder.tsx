@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ReactFlowProvider, useNodesState, useEdgesState, useViewport } from '@xyflow/react';
 import type { Edge } from '@xyflow/react';
 import type { WorkflowDefinition } from '@/lib/api';
@@ -42,6 +43,7 @@ function NodeLibraryPanel({
   commands: CommandEntry[];
   isLoading: boolean;
 }): React.ReactElement {
+  const { t } = useTranslation();
   const [width, setWidth] = useState(() => {
     try {
       const stored = parseInt(localStorage.getItem(NODE_LIBRARY_WIDTH_KEY) ?? '', 10);
@@ -105,16 +107,17 @@ function NodeLibraryPanel({
       <div
         role="separator"
         aria-orientation="vertical"
-        aria-label="Resize node library panel"
+        aria-label={t('workflowsBuilder.panel.resizeAria')}
         onMouseDown={onMouseDown}
         className="absolute right-0 top-0 h-full w-1 cursor-col-resize hover:bg-accent/40 transition-colors z-10"
-        title="Drag to resize"
+        title={t('workflowsBuilder.panel.dragHandleTitle')}
       />
     </div>
   );
 }
 
 function WorkflowBuilderInner(): React.ReactElement {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const editName = searchParams.get('edit');
   const navigate = useNavigate();
@@ -273,38 +276,40 @@ function WorkflowBuilderInner(): React.ReactElement {
       if (result.valid) {
         setValidationErrors([]);
       } else {
-        setValidationErrors(result.errors ?? ['Unknown validation error']);
+        setValidationErrors(result.errors ?? [t('workflowsBuilder.panel.unknownValidationError')]);
       }
       setValidationPanelOpen(true);
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Unknown error');
+      const error = err instanceof Error ? err : new Error(t('common.errors.unknown'));
       console.error('[workflow-builder] workflow.validate_failed', { workflowName, error });
-      setValidationErrors([`Validation request failed: ${error.message}`]);
+      setValidationErrors([
+        t('workflowsBuilder.panel.validationRequestFailed', { error: error.message }),
+      ]);
     }
-  }, [buildDefinition]);
+  }, [buildDefinition, t, workflowName]);
 
   const handleSave = useCallback(async (): Promise<void> => {
     if (!workflowName.trim()) {
-      setValidationErrors(['Workflow name is required']);
+      setValidationErrors([t('workflowsBuilder.panel.workflowNameRequired')]);
       return;
     }
     try {
       const def = buildDefinition();
       const validation = await validateWorkflow(def);
       if (!validation.valid) {
-        setValidationErrors(validation.errors ?? ['Workflow is invalid']);
+        setValidationErrors(validation.errors ?? [t('workflowsBuilder.panel.workflowInvalid')]);
         return;
       }
       setValidationErrors([]);
       await saveWorkflow(workflowName.trim(), def, cwd);
       setHasUnsavedChanges(false);
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Unknown error');
+      const error = err instanceof Error ? err : new Error(t('common.errors.unknown'));
       console.error('[workflow-builder] workflow.save_failed', { workflowName, cwd, error });
-      setValidationErrors([`Save failed: ${error.message}`]);
+      setValidationErrors([t('workflowsBuilder.panel.saveFailed', { error: error.message })]);
       setValidationPanelOpen(true);
     }
-  }, [buildDefinition, workflowName, cwd]);
+  }, [buildDefinition, workflowName, cwd, t]);
 
   const handleRun = useCallback(async (): Promise<void> => {
     if (!workflowName.trim() || hasUnsavedChanges) return;
@@ -314,12 +319,12 @@ function WorkflowBuilderInner(): React.ReactElement {
       await runWorkflow(workflowName.trim(), conversationId, '');
       navigate(`/chat/${conversationId}`);
     } catch (err) {
-      const error = err instanceof Error ? err : new Error('Unknown error');
+      const error = err instanceof Error ? err : new Error(t('common.errors.unknown'));
       console.error('[workflow-builder] workflow.run_failed', { workflowName, error });
-      setValidationErrors([`Run failed: ${error.message}`]);
+      setValidationErrors([t('workflowsBuilder.panel.runFailed', { error: error.message })]);
       setValidationPanelOpen(true);
     }
-  }, [workflowName, hasUnsavedChanges, selectedProjectId, navigate]);
+  }, [workflowName, hasUnsavedChanges, selectedProjectId, navigate, t]);
 
   // Undo/redo handlers
   const handleUndo = useCallback((): void => {
@@ -478,7 +483,7 @@ function WorkflowBuilderInner(): React.ReactElement {
 
       {commandsError && (
         <div className="px-4 py-1.5 text-xs text-error bg-surface-inset border-b border-border">
-          Failed to load commands. Command palette and dropdowns may be empty.
+          {t('workflowsBuilder.panel.loadCommandsFailed')}
         </div>
       )}
 

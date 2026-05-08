@@ -64,7 +64,7 @@ export function CommandPicker({
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search commands..."
+            placeholder={t('workflowsBuilder.commandPicker.searchPlaceholder')}
             value={searchQuery}
             onChange={(e): void => {
               setSearchQuery(e.target.value);
@@ -77,7 +77,9 @@ export function CommandPicker({
       {/* Categories */}
       <div className="flex-1 overflow-y-auto py-1">
         {categories.length === 0 && (
-          <div className="px-3 py-4 text-center text-xs text-text-tertiary">No commands found</div>
+          <div className="px-3 py-4 text-center text-xs text-text-tertiary">
+            {t('workflowsBuilder.commandPicker.noCommands')}
+          </div>
         )}
 
         {categories.map(category => {

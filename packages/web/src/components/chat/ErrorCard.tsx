@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { AlertCircle } from 'lucide-react';
 import type { ErrorDisplay } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -8,6 +9,7 @@ interface ErrorCardProps {
 }
 
 export function ErrorCard({ error, onRetry }: ErrorCardProps): React.ReactElement {
+  const { t } = useTranslation();
   return (
     <div className="rounded-lg border border-border border-l-[3px] border-l-error bg-surface p-4">
       <div className="flex items-start gap-3">
@@ -23,7 +25,9 @@ export function ErrorCard({ error, onRetry }: ErrorCardProps): React.ReactElemen
                   : 'bg-error/20 text-error'
               )}
             >
-              {error.classification === 'transient' ? 'Transient' : 'Fatal'}
+              {error.classification === 'transient'
+                ? t('chat.errorTransient')
+                : t('chat.errorFatal')}
             </span>
           </div>
           {error.suggestedActions.length > 0 && (
@@ -44,7 +48,7 @@ export function ErrorCard({ error, onRetry }: ErrorCardProps): React.ReactElemen
               onClick={onRetry}
               className="mt-2 text-xs text-text-secondary hover:text-text-primary"
             >
-              Retry
+              {t('chat.errorRetry')}
             </button>
           )}
         </div>

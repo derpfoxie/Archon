@@ -1,5 +1,6 @@
 import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useQuery } from '@tanstack/react-query';
@@ -101,6 +102,7 @@ function WorkflowResultCard({
   runId: string;
   content: string;
 }): React.ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
   const [artifactViewer, setArtifactViewer] = useState<{
@@ -184,11 +186,11 @@ function WorkflowResultCard({
   // Status-aware header title
   let headerTitle: string;
   if (status === 'failed') {
-    headerTitle = 'Workflow failed';
+    headerTitle = t('chat.messageList.workflowFailed');
   } else if (status === 'cancelled') {
-    headerTitle = 'Workflow cancelled';
+    headerTitle = t('chat.messageList.workflowCancelled');
   } else {
-    headerTitle = 'Workflow complete';
+    headerTitle = t('chat.messageList.workflowComplete');
   }
 
   // Expand/collapse for text content
@@ -247,7 +249,7 @@ function WorkflowResultCard({
               }}
               className="mt-1 text-[10px] text-primary hover:text-accent-bright transition-colors"
             >
-              {expanded ? 'Show less' : 'Show more'}
+              {expanded ? t('chat.messageList.showLess') : t('chat.messageList.showMore')}
             </button>
           )}
         </div>
@@ -293,6 +295,7 @@ function MessageListRaw({
   projectName,
   onQuickAction,
 }: MessageListProps): React.ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
   const { isAtBottom, scrollToBottom } = useAutoScroll(
@@ -331,7 +334,7 @@ function MessageListRaw({
             <div className="flex flex-col items-center gap-2 text-center">
               <Sparkles className="h-8 w-8 text-primary" />
               <h2 className="text-base font-semibold text-text-primary">
-                What would you like to do?
+                {t('chat.messageList.newChatTitle')}
               </h2>
             </div>
             <div className="flex flex-wrap justify-center gap-2">
@@ -343,18 +346,20 @@ function MessageListRaw({
                 }}
                 className="flex items-center gap-1.5"
               >
-                Run a workflow
+                {t('chat.messageList.runWorkflow')}
                 <ArrowRight className="h-3.5 w-3.5" />
               </Button>
               <Button variant="outline" size="sm" onClick={(): void => onQuickAction?.('focus')}>
-                Ask a question
+                {t('chat.messageList.askQuestion')}
               </Button>
               <Button variant="outline" size="sm" onClick={(): void => onQuickAction?.('/status')}>
                 /status
               </Button>
             </div>
             {projectName && (
-              <p className="text-xs text-text-tertiary text-center">Project: {projectName}</p>
+              <p className="text-xs text-text-tertiary text-center">
+                {t('chat.messageList.projectLabel', { name: projectName })}
+              </p>
             )}
           </div>
         </div>
@@ -364,7 +369,7 @@ function MessageListRaw({
       <div className="flex flex-1 items-center justify-center">
         <div className="flex flex-col items-center gap-3 text-text-tertiary">
           <MessageSquare className="h-10 w-10" />
-          <p className="text-sm">Send a message to start chatting</p>
+          <p className="text-sm">{t('chat.messageList.emptyPrompt')}</p>
         </div>
       </div>
     );

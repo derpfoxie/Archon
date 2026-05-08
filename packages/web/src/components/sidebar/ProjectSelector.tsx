@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FolderGit2, Trash2 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { CodebaseResponse } from '@/lib/api';
@@ -30,6 +31,7 @@ export function ProjectSelector({
   isLoading,
   searchQuery,
 }: ProjectSelectorProps): React.ReactElement {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [deleteTarget, setDeleteTarget] = useState<CodebaseResponse | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -131,7 +133,7 @@ export function ProjectSelector({
                 setDeleteTarget(project);
               }}
               className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity hover:bg-surface-elevated"
-              title="Remove project"
+              title={t('sidebarChat.removeProject')}
             >
               <Trash2 className="h-3.5 w-3.5 text-text-tertiary hover:text-error" />
             </button>
@@ -150,7 +152,7 @@ export function ProjectSelector({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove project?</AlertDialogTitle>
+            <AlertDialogTitle>{t('sidebarChat.removeProjectTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
               This will remove <strong>{deleteTarget?.name}</strong> from Archon, delete its
               workspace directory and worktrees. This cannot be undone.
@@ -158,8 +160,8 @@ export function ProjectSelector({
           </AlertDialogHeader>
           {deleteError && <p className="text-sm text-error px-1">{deleteError}</p>}
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Remove</AlertDialogAction>
+            <AlertDialogCancel>{t('common.actions.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>{t('sidebarChat.remove')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

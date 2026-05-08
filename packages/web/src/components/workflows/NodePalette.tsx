@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { listCommands, type CommandEntry } from '@/lib/api';
 import { useProject } from '@/contexts/ProjectContext';
 
 export function NodePalette(): React.ReactElement {
+  const { t } = useTranslation();
   const { codebases, selectedProjectId } = useProject();
   const cwd = selectedProjectId
     ? codebases?.find(cb => cb.id === selectedProjectId)?.default_cwd
@@ -35,7 +37,7 @@ export function NodePalette(): React.ReactElement {
   return (
     <div className="flex flex-col h-full overflow-auto p-2">
       <h3 className="text-xs font-semibold text-text-secondary uppercase tracking-wide mb-2">
-        Nodes
+        {t('workflowsBuilder.nodePalette.title')}
       </h3>
 
       {/* Prompt node */}
@@ -47,7 +49,7 @@ export function NodePalette(): React.ReactElement {
         className="flex items-center gap-2 px-2 py-1.5 rounded-md border border-dashed border-border hover:border-accent hover:bg-accent/5 cursor-grab text-xs text-text-primary mb-1"
       >
         <span className="text-[10px] text-accent font-medium">PROMPT</span>
-        <span>Inline prompt</span>
+        <span>{t('workflowsBuilder.nodePalette.inlinePrompt')}</span>
       </div>
 
       {/* Bash node */}
@@ -59,20 +61,26 @@ export function NodePalette(): React.ReactElement {
         className="flex items-center gap-2 px-2 py-1.5 rounded-md border border-dashed border-border hover:border-accent hover:bg-accent/5 cursor-grab text-xs text-text-primary mb-2"
       >
         <span className="text-[10px] text-accent font-medium">BASH</span>
-        <span>Shell script</span>
+        <span>{t('workflowsBuilder.nodePalette.shellScript')}</span>
       </div>
 
-      {isLoading && <p className="text-xs text-text-tertiary">Loading commands...</p>}
+      {isLoading && (
+        <p className="text-xs text-text-tertiary">
+          {t('workflowsBuilder.nodePalette.loadingCommands')}
+        </p>
+      )}
       {isError && (
         <p className="text-xs text-error">
-          Failed to load commands: {error instanceof Error ? error.message : 'Unknown error'}
+          {t('workflowsBuilder.nodePalette.loadFailed', {
+            error: error instanceof Error ? error.message : t('common.errors.unknown'),
+          })}
         </p>
       )}
 
       {project.length > 0 && (
         <>
           <h4 className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide mt-2 mb-1">
-            Project
+            {t('workflowsBuilder.nodePalette.sectionProject')}
           </h4>
           {project.map((cmd: CommandEntry) => (
             <div
@@ -93,7 +101,7 @@ export function NodePalette(): React.ReactElement {
       {global.length > 0 && (
         <>
           <h4 className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide mt-2 mb-1">
-            Global (~/.archon/commands/)
+            {t('workflowsBuilder.nodePalette.sectionGlobal')}
           </h4>
           {global.map((cmd: CommandEntry) => (
             <div
@@ -114,7 +122,7 @@ export function NodePalette(): React.ReactElement {
       {bundled.length > 0 && (
         <>
           <h4 className="text-[10px] font-medium text-text-tertiary uppercase tracking-wide mt-2 mb-1">
-            Bundled
+            {t('workflowsBuilder.nodePalette.sectionBundled')}
           </h4>
           {bundled.map((cmd: CommandEntry) => (
             <div

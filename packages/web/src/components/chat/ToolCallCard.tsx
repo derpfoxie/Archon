@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronRight, Loader2, Terminal } from 'lucide-react';
 import type { ToolCallDisplay } from '@/lib/types';
 import { cn } from '@/lib/utils';
@@ -8,6 +9,7 @@ interface ToolCallCardProps {
 }
 
 export function ToolCallCard({ tool }: ToolCallCardProps): React.ReactElement {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(tool.isExpanded);
   const [showAllOutput, setShowAllOutput] = useState(false);
   const isRunning = tool.output === undefined && tool.duration === undefined;
@@ -83,7 +85,7 @@ export function ToolCallCard({ tool }: ToolCallCardProps): React.ReactElement {
           {Object.keys(tool.input).length > 0 && (
             <div className="mb-2">
               <span className="text-[10px] font-medium uppercase tracking-wider text-text-tertiary">
-                Input
+                {t('chat.toolInput')}
               </span>
               <pre className="mt-1 overflow-x-auto rounded-md bg-background p-2 font-mono text-xs text-text-secondary">
                 {JSON.stringify(tool.input, null, 2)}
@@ -93,10 +95,10 @@ export function ToolCallCard({ tool }: ToolCallCardProps): React.ReactElement {
           {tool.output !== undefined && (
             <div>
               <span className="text-[10px] font-medium uppercase tracking-wider text-text-tertiary">
-                Output
+                {t('chat.toolOutput')}
               </span>
               <pre className="mt-1 max-h-80 overflow-auto rounded-md bg-background p-2 font-mono text-xs text-text-secondary">
-                {displayOutput || '(no output)'}
+                {displayOutput || t('chat.toolNoOutput')}
               </pre>
               {isLongOutput && !showAllOutput && (
                 <button
@@ -105,7 +107,7 @@ export function ToolCallCard({ tool }: ToolCallCardProps): React.ReactElement {
                   }}
                   className="mt-1 text-xs text-text-secondary hover:text-text-primary"
                 >
-                  Show {String(outputLines.length - 20)} more lines
+                  {t('chat.toolShowMore', { count: outputLines.length - 20 })}
                 </button>
               )}
             </div>

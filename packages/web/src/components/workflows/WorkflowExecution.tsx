@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { MessageSquare } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 
 import { DagNodeProgress } from './DagNodeProgress';
 import { StepLogs } from './StepLogs';
@@ -74,6 +75,7 @@ function StatusBadge({ status }: { status: string }): React.ReactElement {
 }
 
 export function WorkflowExecution({ runId }: WorkflowExecutionProps): React.ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const liveWorkflow = useWorkflowStore(s => s.workflows.get(runId));
@@ -479,7 +481,7 @@ export function WorkflowExecution({ runId }: WorkflowExecutionProps): React.Reac
   if (error) {
     return (
       <div className="flex items-center justify-center h-full text-error">
-        <p>Failed to load workflow run: {error}</p>
+        <p>{t('workflowsExecution.page.loadFailed', { error })}</p>
       </div>
     );
   }
@@ -487,7 +489,7 @@ export function WorkflowExecution({ runId }: WorkflowExecutionProps): React.Reac
   if (!workflow) {
     return (
       <div className="flex items-center justify-center h-full text-text-secondary">
-        <p>Loading workflow execution...</p>
+        <p>{t('workflowsExecution.page.loading')}</p>
       </div>
     );
   }
@@ -514,7 +516,7 @@ export function WorkflowExecution({ runId }: WorkflowExecutionProps): React.Reac
       <div className="flex-1 flex flex-col overflow-hidden min-h-0">
         {logsPlatformId && !selectedStepHasEvents && !isRunning ? (
           <div className="flex-1 flex items-center justify-center text-text-secondary text-sm">
-            No output available for this step.
+            {t('workflowsExecution.page.noOutput')}
           </div>
         ) : logsPlatformId ? (
           <WorkflowLogs
@@ -555,7 +557,7 @@ export function WorkflowExecution({ runId }: WorkflowExecutionProps): React.Reac
             ) : (
               <div className="flex items-center justify-center h-full text-text-secondary">
                 <span className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent mr-2" />
-                Loading graph...
+                {t('workflowsExecution.page.loadingGraph')}
               </div>
             )}
           </ResizablePanel>
@@ -601,7 +603,7 @@ export function WorkflowExecution({ runId }: WorkflowExecutionProps): React.Reac
             }
           }}
           className="text-text-secondary hover:text-text-primary transition-colors text-sm"
-          title="Back"
+          title={t('workflowsExecution.page.back')}
         >
           &larr;
         </button>
@@ -617,9 +619,9 @@ export function WorkflowExecution({ runId }: WorkflowExecutionProps): React.Reac
                 navigate(`/workflows/runs/${workerRunId}`);
               }}
               className="flex items-center gap-1 text-xs text-primary hover:text-accent-bright transition-colors"
-              title="View workflow run details"
+              title={t('workflowsExecution.page.viewRunDetails')}
             >
-              <span>Run Details</span>
+              <span>{t('workflowsExecution.page.runDetails')}</span>
             </button>
           )}
           <span className="text-xs text-text-secondary">{formatDurationMs(elapsed)}</span>
@@ -636,12 +638,12 @@ export function WorkflowExecution({ runId }: WorkflowExecutionProps): React.Reac
             }}
           >
             <TabsList>
-              <TabsTrigger value="graph">Graph</TabsTrigger>
-              <TabsTrigger value="logs">Logs</TabsTrigger>
+              <TabsTrigger value="graph">{t('workflowsExecution.page.tabGraph')}</TabsTrigger>
+              <TabsTrigger value="logs">{t('workflowsExecution.page.tabLogs')}</TabsTrigger>
               {parentPlatformId && (
                 <TabsTrigger value="chat">
                   <MessageSquare className="h-3 w-3 mr-1" />
-                  Chat
+                  {t('workflowsExecution.page.tabChat')}
                 </TabsTrigger>
               )}
             </TabsList>

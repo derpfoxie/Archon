@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { MessageList } from '@/components/chat/MessageList';
 import { useSSE } from '@/hooks/useSSE';
 import { getMessages } from '@/lib/api';
@@ -183,6 +184,7 @@ export function WorkflowLogs({
   scrollToNodeTimestamp,
   nodeScrollTrigger,
 }: WorkflowLogsProps): React.ReactElement {
+  const { t } = useTranslation();
   const [sseMessages, setSseMessages] = useState<ChatMessage[]>([]);
   const queryClient = useQueryClient();
   const prevIsRunningRef = useRef(isRunning);
@@ -621,7 +623,7 @@ export function WorkflowLogs({
       <div className="flex flex-1 items-center justify-center">
         <div className="flex flex-col items-center gap-3 text-text-tertiary">
           <span className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-          <p className="text-sm">Loading workflow logs...</p>
+          <p className="text-sm">{t('workflowsExecution.logs.loadingWorkflowLogs')}</p>
         </div>
       </div>
     );
@@ -632,7 +634,9 @@ export function WorkflowLogs({
       {isRunning && currentlyExecuting && (
         <div className="px-4 py-2 bg-surface-secondary border-b border-border flex items-center gap-2 text-sm shrink-0">
           <span className="inline-block w-2 h-2 rounded-full bg-accent animate-pulse" />
-          <span className="text-text-secondary">Currently executing:</span>
+          <span className="text-text-secondary">
+            {t('workflowsExecution.logs.currentlyExecuting')}
+          </span>
           <span className="font-medium text-text-primary">{currentlyExecuting.nodeName}</span>
           <span className="text-text-tertiary text-xs">
             ({formatDurationMs(Date.now() - currentlyExecuting.startedAt)})

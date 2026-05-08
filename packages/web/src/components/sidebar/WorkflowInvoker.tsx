@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 import { listWorkflows, createConversation, runWorkflow, deleteConversation } from '@/lib/api';
 import { useProject } from '@/contexts/ProjectContext';
@@ -10,6 +11,7 @@ interface WorkflowInvokerProps {
 }
 
 export function WorkflowInvoker({ codebaseId }: WorkflowInvokerProps): React.ReactElement | null {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { codebases } = useProject();
   const [selectedWorkflow, setSelectedWorkflow] = useState<string | null>(null);
@@ -26,7 +28,7 @@ export function WorkflowInvoker({ codebaseId }: WorkflowInvokerProps): React.Rea
   });
 
   if (isErrorWorkflows) {
-    return <p className="mx-1 text-[10px] text-error">Failed to load workflows — retrying</p>;
+    return <p className="mx-1 text-[10px] text-error">{t('sidebarChat.loadWorkflowsRetry')}</p>;
   }
 
   if (!workflows || workflows.length === 0) return null;
@@ -46,7 +48,7 @@ export function WorkflowInvoker({ codebaseId }: WorkflowInvokerProps): React.Rea
       navigate(`/chat/${conversationId}`);
     } catch (err) {
       console.error('[WorkflowInvoker] Failed to start workflow', { err });
-      setError(err instanceof Error ? err.message : 'Failed to start workflow');
+      setError(err instanceof Error ? err.message : t('sidebarChat.startWorkflowFailed'));
       if (conversationId !== undefined && !workflowStarted) {
         void deleteConversation(conversationId).catch((cleanupErr: unknown) => {
           console.warn('[WorkflowInvoker] Failed to clean up orphan conversation', {
@@ -70,7 +72,7 @@ export function WorkflowInvoker({ codebaseId }: WorkflowInvokerProps): React.Rea
         }}
         className="w-full rounded-md border border-border bg-surface-elevated px-2 py-1.5 text-xs text-text-secondary focus:outline-none focus:ring-1 focus:ring-accent"
       >
-        <option value="">Run workflow...</option>
+        <option value="">{t('sidebarChat.runWorkflow')}</option>
         {workflows.map(entry => (
           <option key={entry.workflow.name} value={entry.workflow.name}>
             {entry.workflow.name}
@@ -91,7 +93,7 @@ export function WorkflowInvoker({ codebaseId }: WorkflowInvokerProps): React.Rea
                 void handleRun();
               }
             }}
-            placeholder="Enter message..."
+            placeholder={t('sidebarChat.messagePlaceholder')}
             name="workflow-message"
             autoComplete="off"
             disabled={running}
@@ -108,7 +110,7 @@ export function WorkflowInvoker({ codebaseId }: WorkflowInvokerProps): React.Rea
               className="flex items-center gap-1 rounded-md bg-primary px-2 py-1 text-[11px] font-medium text-primary-foreground hover:bg-accent-hover transition-colors disabled:opacity-50"
             >
               {running && <Loader2 className="h-3 w-3 animate-spin" />}
-              {running ? 'Starting...' : 'Run'}
+              {running ? t('sidebarChat.starting') : t('sidebarChat.run')}
             </button>
           </div>
         </div>

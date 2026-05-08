@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { listWorkflows } from '@/lib/api';
@@ -28,11 +29,11 @@ export interface BuilderToolbarProps {
   onLoadWorkflow: (name: string) => void;
 }
 
-const VIEW_MODE_LABELS: readonly { value: ViewMode; label: string }[] = [
-  { value: 'hidden', label: 'Visual' },
-  { value: 'split', label: 'Split' },
-  { value: 'full', label: 'YAML' },
-];
+const VIEW_MODE_KEYS = [
+  { value: 'hidden', key: 'workflowsBuilder.toolbar.viewVisual' },
+  { value: 'split', key: 'workflowsBuilder.toolbar.viewSplit' },
+  { value: 'full', key: 'workflowsBuilder.toolbar.viewYaml' },
+] as const;
 
 export function BuilderToolbar({
   workflowName,
@@ -52,6 +53,7 @@ export function BuilderToolbar({
   onRun,
   onLoadWorkflow,
 }: BuilderToolbarProps): React.ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { codebases, selectedProjectId } = useProject();
   const cwd = selectedProjectId
@@ -80,11 +82,15 @@ export function BuilderToolbar({
             className="rounded-md border border-border bg-surface px-1.5 py-1 text-xs text-text-secondary focus:outline-none focus:ring-1 focus:ring-accent w-[72px] shrink-0"
             title={
               workflowsError
-                ? 'Failed to load workflows — check server connection'
-                : 'Load workflow'
+                ? t('workflowsBuilder.toolbar.loadFailedTitle')
+                : t('workflowsBuilder.toolbar.loadWorkflowTitle')
             }
           >
-            <option value="">{workflowsError ? 'Load failed' : 'Load...'}</option>
+            <option value="">
+              {workflowsError
+                ? t('workflowsBuilder.toolbar.loadFailedOption')
+                : t('workflowsBuilder.toolbar.loadOption')}
+            </option>
             {(workflows ?? []).map(entry => (
               <option key={entry.workflow.name} value={entry.workflow.name}>
                 {entry.workflow.name}
@@ -101,7 +107,7 @@ export function BuilderToolbar({
               }}
               className="text-xs text-text-tertiary hover:text-text-secondary shrink-0"
             >
-              Workflows
+              {t('workflowsBuilder.toolbar.breadcrumb')}
             </button>
             <span className="text-xs text-text-tertiary shrink-0">/</span>
             <input
@@ -110,13 +116,13 @@ export function BuilderToolbar({
               onChange={(e): void => {
                 onNameChange(e.target.value);
               }}
-              placeholder="workflow-name"
+              placeholder={t('workflowsBuilder.toolbar.namePlaceholder')}
               className="min-w-[80px] max-w-[160px] rounded-md border border-transparent hover:border-border focus:border-border bg-transparent px-1.5 py-0.5 text-xs font-medium text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-accent"
             />
             {hasUnsavedChanges && (
               <span
                 className="w-1.5 h-1.5 rounded-full bg-warning shrink-0"
-                title="Unsaved changes"
+                title={t('workflowsBuilder.toolbar.unsavedChanges')}
               />
             )}
           </div>
@@ -133,7 +139,7 @@ export function BuilderToolbar({
                 setShowDescription(false);
               }}
               autoFocus
-              placeholder="Description..."
+              placeholder={t('workflowsBuilder.toolbar.descriptionPlaceholder')}
               className="w-48 rounded-md border border-border bg-surface px-2 py-0.5 text-xs text-text-secondary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-accent"
             />
           ) : (
@@ -143,9 +149,9 @@ export function BuilderToolbar({
                 setShowDescription(true);
               }}
               className="text-[10px] text-text-tertiary hover:text-text-secondary truncate max-w-[120px] shrink-0"
-              title={workflowDescription || 'Add description'}
+              title={workflowDescription || t('workflowsBuilder.toolbar.addDescription')}
             >
-              {workflowDescription || 'add description'}
+              {workflowDescription || t('workflowsBuilder.toolbar.addDescriptionShort')}
             </button>
           )}
 
@@ -164,7 +170,7 @@ export function BuilderToolbar({
             }}
             className="rounded-md border border-border bg-surface px-1.5 py-1 text-xs text-text-primary focus:outline-none focus:ring-1 focus:ring-accent"
           >
-            <option value="">Provider</option>
+            <option value="">{t('workflowsBuilder.toolbar.providerPlaceholder')}</option>
             {providers.map(p => (
               <option key={p.id} value={p.id}>
                 {p.displayName}
@@ -178,7 +184,7 @@ export function BuilderToolbar({
             onChange={(e): void => {
               onModelChange(e.target.value || undefined);
             }}
-            placeholder="Model"
+            placeholder={t('workflowsBuilder.toolbar.modelPlaceholder')}
             className="w-20 rounded-md border border-border bg-surface px-1.5 py-1 text-xs text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-accent"
           />
         </div>
@@ -187,7 +193,7 @@ export function BuilderToolbar({
         <div className="flex items-center gap-1.5 shrink-0">
           {/* View toggle */}
           <div className="flex rounded-md border border-border overflow-hidden">
-            {VIEW_MODE_LABELS.map(({ value, label }) => (
+            {VIEW_MODE_KEYS.map(({ value, key }) => (
               <button
                 key={value}
                 type="button"
@@ -201,7 +207,7 @@ export function BuilderToolbar({
                     : 'bg-surface text-text-secondary hover:text-text-primary hover:bg-surface-hover'
                 )}
               >
-                {label}
+                {t(key)}
               </button>
             ))}
           </div>
@@ -214,28 +220,28 @@ export function BuilderToolbar({
           )}
 
           <Button variant="outline" size="xs" onClick={onValidate}>
-            Validate
+            {t('workflowsBuilder.toolbar.validate')}
           </Button>
 
           <Button variant="secondary" size="xs" onClick={onSave} disabled={!workflowName.trim()}>
-            Save
+            {t('workflowsBuilder.toolbar.save')}
           </Button>
 
           <Button
             size="xs"
             onClick={onRun}
             disabled={!workflowName.trim() || hasUnsavedChanges}
-            title={hasUnsavedChanges ? 'Save the workflow before running' : undefined}
+            title={hasUnsavedChanges ? t('workflowsBuilder.toolbar.saveBeforeRun') : undefined}
             className="bg-node-command hover:bg-node-command/90 text-white"
           >
-            Run
+            {t('workflowsBuilder.toolbar.run')}
           </Button>
         </div>
       </div>
 
       {workflowsError && (
         <div className="px-4 py-1.5 text-xs text-error bg-surface-inset border-b border-border">
-          Failed to load workflow list. The load dropdown may be empty.
+          {t('workflowsBuilder.toolbar.loadListFailed')}
         </div>
       )}
     </>

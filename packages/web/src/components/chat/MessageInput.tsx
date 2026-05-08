@@ -8,6 +8,7 @@ import {
   type DragEvent,
   type ClipboardEvent,
 } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowUp, Loader2, Paperclip, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -125,6 +126,7 @@ const messageInput = forwardRef<MessageInputHandle, MessageInputProps>(function 
   { onSend, disabled, disabledReason }: MessageInputProps,
   ref
 ): React.ReactElement {
+  const { t } = useTranslation();
   const [value, setValue] = useState('');
   const [files, setFiles] = useState<{ file: File; id: string }[]>([]);
   const [dragging, setDragging] = useState(false);
@@ -138,32 +140,35 @@ const messageInput = forwardRef<MessageInputHandle, MessageInputProps>(function 
     },
   }));
 
-  const addFiles = useCallback((incoming: File[]): void => {
-    setFileError(null);
-    setFiles(prev => {
-      const combined = [...prev];
-      const rejections: string[] = [];
-      for (const file of incoming) {
-        if (combined.length >= MAX_FILES) {
-          rejections.push(`Maximum ${String(MAX_FILES)} files per message`);
-          break;
+  const addFiles = useCallback(
+    (incoming: File[]): void => {
+      setFileError(null);
+      setFiles(prev => {
+        const combined = [...prev];
+        const rejections: string[] = [];
+        for (const file of incoming) {
+          if (combined.length >= MAX_FILES) {
+            rejections.push(t('chat.input.maxFiles', { count: MAX_FILES }));
+            break;
+          }
+          if (file.size > MAX_FILE_BYTES) {
+            rejections.push(t('chat.input.fileTooBig', { name: file.name }));
+            continue;
+          }
+          if (!isAcceptedFileType(file)) {
+            rejections.push(t('chat.input.fileTypeUnsupported', { name: file.name }));
+            continue;
+          }
+          combined.push({ file, id: crypto.randomUUID() });
         }
-        if (file.size > MAX_FILE_BYTES) {
-          rejections.push(`"${file.name}" exceeds the 10 MB size limit`);
-          continue;
+        if (rejections.length > 0) {
+          setFileError(rejections.join('; '));
         }
-        if (!isAcceptedFileType(file)) {
-          rejections.push(`"${file.name}" is not a supported file type`);
-          continue;
-        }
-        combined.push({ file, id: crypto.randomUUID() });
-      }
-      if (rejections.length > 0) {
-        setFileError(rejections.join('; '));
-      }
-      return combined;
-    });
-  }, []);
+        return combined;
+      });
+    },
+    [t]
+  );
 
   const removeFile = useCallback((id: string): void => {
     setFiles(prev => prev.filter(f => f.id !== id));
@@ -267,7 +272,7 @@ const messageInput = forwardRef<MessageInputHandle, MessageInputProps>(function 
                     removeFile(id);
                   }}
                   className="ml-1 text-text-tertiary hover:text-text-primary"
-                  aria-label={`Remove ${file.name}`}
+                  aria-label={t('chat.input.removeFile', { name: file.name })}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -300,7 +305,7 @@ const messageInput = forwardRef<MessageInputHandle, MessageInputProps>(function 
             disabled={disabled || files.length >= MAX_FILES}
             onClick={() => fileInputRef.current?.click()}
             className="h-10 w-10 shrink-0 text-text-tertiary hover:text-text-primary"
-            title="Attach file"
+            title={t('chat.input.attachFile')}
           >
             <Paperclip className="h-4 w-4" />
           </Button>
@@ -312,7 +317,11 @@ const messageInput = forwardRef<MessageInputHandle, MessageInputProps>(function 
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
             disabled={disabled}
-            placeholder={dragging ? 'Drop files here...' : (disabledReason ?? 'Message Archon...')}
+            placeholder={
+              dragging
+                ? t('chat.input.dropFilesPlaceholder')
+                : (disabledReason ?? t('chat.input.messagePlaceholder'))
+            }
             rows={1}
             className="flex-1 resize-none overflow-hidden rounded-lg border border-border bg-background px-4 py-2 text-sm leading-6 text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
             style={{ minHeight: '40px', maxHeight: '200px' }}

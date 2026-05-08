@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 
 interface StatusBarProps {
@@ -19,6 +20,7 @@ export function StatusBar({
   zoomLevel,
   onValidationClick,
 }: StatusBarProps): React.ReactElement {
+  const { t } = useTranslation();
   const isValid = errorCount === 0 && warningCount === 0;
 
   return (
@@ -49,23 +51,31 @@ export function StatusBar({
               >
                 <polyline points="20 6 9 17 4 12" />
               </svg>
-              <span>Valid</span>
+              <span>{t('workflowsBuilder.statusBar.valid')}</span>
             </>
           ) : (
             <>
-              {errorCount > 0 && <span className="text-error">{errorCount} errors</span>}
+              {errorCount > 0 && (
+                <span className="text-error">
+                  {t('workflowsBuilder.statusBar.errors', { count: errorCount })}
+                </span>
+              )}
               {errorCount > 0 && warningCount > 0 && <span>,</span>}
-              {warningCount > 0 && <span className="text-warning">{warningCount} warnings</span>}
+              {warningCount > 0 && (
+                <span className="text-warning">
+                  {t('workflowsBuilder.statusBar.warnings', { count: warningCount })}
+                </span>
+              )}
             </>
           )}
         </button>
 
         {/* Mode label */}
-        <span>DAG</span>
+        <span>{t('workflowsBuilder.statusBar.modeLabel')}</span>
 
         {/* Node/edge count */}
         <span>
-          {nodeCount} nodes &middot; {edgeCount} edges
+          {t('workflowsBuilder.statusBar.graphSummary', { nodes: nodeCount, edges: edgeCount })}
         </span>
       </div>
 
@@ -75,7 +85,7 @@ export function StatusBar({
         {hasUnsavedChanges && (
           <span className="flex items-center gap-1 text-warning">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-warning" />
-            Unsaved
+            {t('workflowsBuilder.statusBar.unsaved')}
           </span>
         )}
 

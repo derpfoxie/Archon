@@ -1,4 +1,5 @@
 import { memo, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Copy, Check, Paperclip } from 'lucide-react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
@@ -137,6 +138,7 @@ interface MessageBubbleProps {
 }
 
 function MessageBubbleRaw({ message }: MessageBubbleProps): React.ReactElement {
+  const { t } = useTranslation();
   const isUser = message.role === 'user';
   const isThinking = message.isStreaming && !message.content;
   const [copied, setCopied] = useState(false);
@@ -181,8 +183,8 @@ function MessageBubbleRaw({ message }: MessageBubbleProps): React.ReactElement {
                 <button
                   onClick={copyMessage}
                   className="shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity text-text-tertiary hover:text-text-primary"
-                  title="Copy message"
-                  aria-label={copied ? 'Copied' : 'Copy message'}
+                  title={t('chat.copyMessage')}
+                  aria-label={copied ? t('chat.copied') : t('chat.copyMessage')}
                 >
                   {copied ? (
                     <Check className="h-3.5 w-3.5 text-success" />
@@ -225,7 +227,7 @@ function MessageBubbleRaw({ message }: MessageBubbleProps): React.ReactElement {
                 <details className="group">
                   <summary className="cursor-pointer text-sm text-text-secondary hover:text-text-primary">
                     <span className="text-xs bg-surface-secondary rounded px-1.5 py-0.5 font-mono">
-                      JSON output
+                      {t('chat.jsonOutput')}
                     </span>
                   </summary>
                   <pre className="mt-2 text-xs bg-surface-inset rounded p-3 overflow-x-auto">

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle, ChevronRight, Loader2, Pause, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { approveWorkflowRun, getWorkflowRunByWorker, rejectWorkflowRun } from '@/lib/api';
@@ -20,6 +21,7 @@ export function WorkflowProgressCard({
   workflowName,
   workerConversationId,
 }: WorkflowProgressCardProps): React.ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   // REST polling for run data (stops when terminal)
@@ -115,7 +117,7 @@ export function WorkflowProgressCard({
       <div className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-xs max-w-md">
         <Loader2 className="h-3.5 w-3.5 animate-spin text-primary shrink-0" />
         <span className="truncate text-text-primary font-medium">{workflowName}</span>
-        <span className="text-text-tertiary">Starting...</span>
+        <span className="text-text-tertiary">{t('chat.progress.starting')}</span>
       </div>
     );
   }
@@ -132,7 +134,7 @@ export function WorkflowProgressCard({
           }}
           className="text-primary hover:text-accent-bright transition-colors shrink-0"
         >
-          Retry
+          {t('chat.errorRetry')}
         </button>
       </div>
     );
@@ -163,7 +165,7 @@ export function WorkflowProgressCard({
         <span className="truncate text-xs font-medium text-text-primary">{workflowName}</span>
         {totalNodes > 0 && (
           <span className="shrink-0 text-[10px] text-text-secondary">
-            {String(completedCount)}/{String(totalNodes)} nodes
+            {t('chat.progress.nodes', { completed: completedCount, total: totalNodes })}
           </span>
         )}
         <span className="ml-auto shrink-0">
@@ -207,7 +209,7 @@ export function WorkflowProgressCard({
               <div className="rounded-md bg-warning/5 border border-warning/20 px-3 py-2 flex items-start gap-2">
                 <Pause className="h-3.5 w-3.5 text-warning shrink-0 mt-0.5" />
                 <p className="text-xs text-text-secondary">
-                  {approval?.message ?? 'Waiting for approval'}
+                  {approval?.message ?? t('chat.progress.waitingForApproval')}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -219,7 +221,7 @@ export function WorkflowProgressCard({
                   className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-success/80 hover:bg-success/10 hover:text-success transition-colors disabled:opacity-50"
                 >
                   <CheckCircle className="h-3.5 w-3.5" />
-                  Approve
+                  {t('chat.progress.approve')}
                 </button>
                 <ConfirmRunActionDialog
                   trigger={
@@ -228,10 +230,10 @@ export function WorkflowProgressCard({
                       className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-error/80 hover:bg-error/10 hover:text-error transition-colors disabled:opacity-50"
                     >
                       <XCircle className="h-3.5 w-3.5" />
-                      Reject
+                      {t('chat.progress.reject')}
                     </button>
                   }
-                  title="Reject workflow?"
+                  title={t('chat.progress.rejectTitle')}
                   description={
                     <>
                       Reject the paused workflow <strong>{workflowName}</strong>. If the approval
@@ -239,10 +241,10 @@ export function WorkflowProgressCard({
                       <code>$REJECTION_REASON</code>; otherwise the run is cancelled.
                     </>
                   }
-                  confirmLabel="Reject"
+                  confirmLabel={t('chat.progress.reject')}
                   reasonInput={{
-                    label: 'Reason (optional)',
-                    placeholder: 'Why are you rejecting? Visible to the on_reject prompt.',
+                    label: t('chat.progress.rejectReasonLabel'),
+                    placeholder: t('chat.progress.rejectReasonPlaceholder'),
                   }}
                   onConfirm={(reason): void => {
                     rejectMutation.mutate(reason);
@@ -253,7 +255,7 @@ export function WorkflowProgressCard({
                 <p className="text-xs text-error">
                   {mutationError instanceof Error
                     ? mutationError.message
-                    : 'Action failed — please try again'}
+                    : t('chat.progress.actionFailed')}
                 </p>
               )}
             </div>
@@ -283,7 +285,7 @@ export function WorkflowProgressCard({
               onClick={handleViewFullScreen}
               className="text-[10px] text-primary hover:text-accent-bright transition-colors"
             >
-              View Full Screen &rarr;
+              {t('chat.progress.viewFullScreen')}
             </button>
           </div>
         </div>

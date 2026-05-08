@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { listConversations, listWorkflowRuns, getCodebaseEnvironments } from '@/lib/api';
 import type { WorkflowRunResponse, IsolationEnvironment } from '@/lib/api';
 import { ConversationItem } from '@/components/conversations/ConversationItem';
@@ -37,6 +38,7 @@ export function ProjectDetail({
   repositoryUrl,
   searchQuery,
 }: ProjectDetailProps): React.ReactElement {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const { data: conversations, isError: isErrorConversations } = useQuery({
@@ -129,7 +131,7 @@ export function ProjectDetail({
         </span>
         <div className="mt-1 flex flex-col gap-0.5">
           {isErrorConversations ? (
-            <span className="px-1 text-xs text-error">Failed to load — retrying</span>
+            <span className="px-1 text-xs text-error">{t('sidebarChat.loadRetry')}</span>
           ) : filteredConversations && filteredConversations.length > 0 ? (
             filteredConversations.map(conv => (
               <ConversationItem
@@ -151,7 +153,7 @@ export function ProjectDetail({
         </span>
         <div className="mt-1 flex flex-col gap-0.5">
           {isErrorRuns ? (
-            <span className="px-1 text-xs text-error">Failed to load — retrying</span>
+            <span className="px-1 text-xs text-error">{t('sidebarChat.loadRetry')}</span>
           ) : sortedRuns && sortedRuns.length > 0 ? (
             sortedRuns.map(run => (
               <button
@@ -182,7 +184,7 @@ export function ProjectDetail({
           </span>
           <div className="mt-1 flex flex-col gap-0.5">
             {isErrorEnvironments ? (
-              <span className="px-1 text-xs text-error">Failed to load — retrying</span>
+              <span className="px-1 text-xs text-error">{t('sidebarChat.loadRetry')}</span>
             ) : (
               activeEnvironments.map((env: IsolationEnvironment) => (
                 <div

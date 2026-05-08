@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
 import type { DashboardCounts, CodebaseResponse, HealthResponse } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -20,12 +21,12 @@ interface StatusSummaryBarProps {
 
 const STATUS_CHIPS = ['running', 'paused', 'completed', 'failed', 'cancelled', 'pending'] as const;
 
-const DATE_RANGE_OPTIONS: { value: DateRange; label: string }[] = [
-  { value: 'today', label: 'Today' },
-  { value: '7d', label: 'Last 7 days' },
-  { value: '30d', label: 'Last 30 days' },
-  { value: 'all', label: 'All time' },
-];
+const DATE_RANGE_KEYS = [
+  { value: 'today', key: 'dashboard.rangeToday' },
+  { value: '7d', key: 'dashboard.rangeLast7Days' },
+  { value: '30d', key: 'dashboard.rangeLast30Days' },
+  { value: 'all', key: 'dashboard.rangeAllTime' },
+] as const;
 
 export function StatusSummaryBar({
   counts,
@@ -40,6 +41,7 @@ export function StatusSummaryBar({
   codebases,
   health,
 }: StatusSummaryBarProps): React.ReactElement {
+  const { t } = useTranslation();
   return (
     <div className="rounded-lg border border-border bg-surface p-4 space-y-3">
       {/* Row 1: Status chips */}
@@ -55,7 +57,7 @@ export function StatusSummaryBar({
               : 'bg-surface-elevated text-text-secondary border border-border hover:border-text-tertiary'
           )}
         >
-          All: {String(counts.all)}
+          {t('dashboard.filterAll', { count: counts.all })}
         </button>
         {STATUS_CHIPS.map(status => {
           const count = counts[status];
@@ -74,7 +76,7 @@ export function StatusSummaryBar({
                 status === 'running' && count > 0 && !isActive && 'animate-pulse'
               )}
             >
-              {status.charAt(0).toUpperCase() + status.slice(1)}: {String(count)}
+              {t('dashboard.filterStatus', { status: t(`common.status.${status}`), count })}
             </button>
           );
         })}
@@ -89,7 +91,7 @@ export function StatusSummaryBar({
           }}
           className="rounded-md border border-border bg-surface-elevated px-2 py-1.5 text-xs text-text-primary focus:border-primary focus:outline-none"
         >
-          <option value="">All Projects</option>
+          <option value="">{t('dashboard.allProjects')}</option>
           {codebases?.map(cb => (
             <option key={cb.id} value={cb.id}>
               {cb.name}
@@ -104,9 +106,9 @@ export function StatusSummaryBar({
           }}
           className="rounded-md border border-border bg-surface-elevated px-2 py-1.5 text-xs text-text-primary focus:border-primary focus:outline-none"
         >
-          {DATE_RANGE_OPTIONS.map(opt => (
+          {DATE_RANGE_KEYS.map(opt => (
             <option key={opt.value} value={opt.value}>
-              {opt.label}
+              {t(opt.key)}
             </option>
           ))}
         </select>
@@ -119,15 +121,17 @@ export function StatusSummaryBar({
             onChange={(e): void => {
               onSearchChange(e.target.value);
             }}
-            placeholder="Search workflows..."
+            placeholder={t('workflowsPage.searchPlaceholder')}
             className="w-full rounded-md border border-border bg-surface-elevated py-1.5 pl-7 pr-2 text-xs text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none"
           />
         </div>
 
         {health && (
           <span className="text-xs text-text-tertiary shrink-0">
-            Capacity: {String(health.concurrency.active)}/{String(health.concurrency.maxConcurrent)}{' '}
-            active
+            {t('dashboard.capacity', {
+              active: health.concurrency.active,
+              max: health.concurrency.maxConcurrent,
+            })}
           </span>
         )}
       </div>

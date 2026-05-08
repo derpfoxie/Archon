@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useAutoScroll } from '@/hooks/useAutoScroll';
 
@@ -8,6 +9,7 @@ interface StepLogsProps {
 }
 
 export function StepLogs({ runId, lines = [] }: StepLogsProps): React.ReactElement {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { isAtBottom, scrollToBottom } = useAutoScroll(containerRef, [lines.length]);
 
@@ -22,11 +24,9 @@ export function StepLogs({ runId, lines = [] }: StepLogsProps): React.ReactEleme
     return (
       <div className="flex-1 overflow-auto p-4 font-mono text-sm bg-surface-inset">
         <div className="text-text-secondary text-xs mb-2">
-          Node logs &middot; Run {runId.slice(0, 8)}
+          {t('workflowsExecution.logs.nodeLogsHeader', { runId: runId.slice(0, 8) })}
         </div>
-        <div className="text-text-secondary italic">
-          Live log output will appear here during workflow execution.
-        </div>
+        <div className="text-text-secondary italic">{t('workflowsExecution.logs.empty')}</div>
       </div>
     );
   }
@@ -34,7 +34,10 @@ export function StepLogs({ runId, lines = [] }: StepLogsProps): React.ReactEleme
   return (
     <div className="flex-1 flex flex-col bg-surface-inset relative">
       <div className="text-text-secondary text-xs px-4 pt-3 pb-1">
-        Node logs &middot; Run {runId.slice(0, 8)} &middot; {String(lines.length)} lines
+        {t('workflowsExecution.logs.nodeLogsHeaderWithCount', {
+          runId: runId.slice(0, 8),
+          count: lines.length,
+        })}
       </div>
       <div ref={containerRef} className="flex-1 overflow-auto px-4 pb-4 font-mono text-sm">
         <div
@@ -67,7 +70,7 @@ export function StepLogs({ runId, lines = [] }: StepLogsProps): React.ReactEleme
           onClick={scrollToBottom}
           className="absolute bottom-4 right-4 bg-accent text-white text-xs px-3 py-1.5 rounded-full shadow-lg hover:bg-accent-bright transition-colors"
         >
-          Jump to bottom
+          {t('workflowsExecution.logs.jumpToBottom')}
         </button>
       )}
     </div>

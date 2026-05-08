@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { NavLink, useNavigate, useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { Pencil, Trash2 } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
 import type { ConversationResponse } from '@/lib/api';
@@ -29,6 +30,7 @@ export function ConversationItem({
   projectName,
   status = 'idle',
 }: ConversationItemProps): React.ReactElement {
+  const { t } = useTranslation();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -43,7 +45,7 @@ export function ConversationItem({
     ? conversation.title.length > 30
       ? conversation.title.slice(0, 30) + '...'
       : conversation.title
-    : 'Untitled conversation';
+    : t('sidebarChat.untitledConversation');
 
   const lastActivity = conversation.last_activity_at
     ? new Date(
@@ -56,7 +58,7 @@ export function ConversationItem({
         hour: '2-digit',
         minute: '2-digit',
       })
-    : 'No activity';
+    : t('sidebarChat.noActivity');
 
   const handleDelete = useCallback((): void => {
     setDeleteError(null);
@@ -145,7 +147,7 @@ export function ConversationItem({
           <div className="flex items-center gap-1.5 min-w-0">
             <span
               className="truncate text-sm text-text-primary"
-              title={conversation.title ?? 'Untitled conversation'}
+              title={conversation.title ?? t('sidebarChat.untitledConversation')}
             >
               {displayName}
             </span>
@@ -178,7 +180,7 @@ export function ConversationItem({
                 }, 0);
               }}
               className="p-1 rounded hover:bg-surface-elevated"
-              title="Rename conversation"
+              title={t('sidebarChat.renameConversation')}
             >
               <Pencil className="h-3.5 w-3.5 text-text-tertiary hover:text-primary" />
             </button>
@@ -190,7 +192,7 @@ export function ConversationItem({
                 setDeleteDialogOpen(true);
               }}
               className="p-1 rounded hover:bg-surface-elevated"
-              title="Delete conversation"
+              title={t('sidebarChat.deleteConversation')}
             >
               <Trash2 className="h-3.5 w-3.5 text-text-tertiary hover:text-error" />
             </button>
@@ -198,7 +200,7 @@ export function ConversationItem({
           <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Delete conversation?</AlertDialogTitle>
+                <AlertDialogTitle>{t('sidebarChat.deleteConversationTitle')}</AlertDialogTitle>
                 <AlertDialogDescription>
                   This will permanently delete this conversation and its messages. This action
                   cannot be undone.
@@ -206,8 +208,10 @@ export function ConversationItem({
               </AlertDialogHeader>
               {deleteError && <p className="text-sm text-error px-1">{deleteError}</p>}
               <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+                <AlertDialogCancel>{t('common.actions.cancel')}</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDelete}>
+                  {t('common.actions.delete')}
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

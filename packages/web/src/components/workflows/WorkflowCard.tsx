@@ -68,7 +68,7 @@ export function WorkflowCard({
     <div
       role="button"
       tabIndex={0}
-      aria-label={`Select workflow: ${displayName}`}
+      aria-label={t('workflowsPage.selectWorkflow', { name: displayName })}
       aria-pressed={isSelected}
       onClick={(): void => {
         onToggle(workflow.name);
@@ -187,7 +187,7 @@ export function WorkflowCard({
               e.stopPropagation();
             }}
             className="p-1.5 rounded-md text-text-tertiary hover:text-text-primary hover:bg-surface-elevated transition-colors"
-            title="Edit in builder"
+            title={t('workflowsPage.editInBuilder')}
           >
             <Pencil className="size-3.5" />
           </Link>
@@ -197,7 +197,7 @@ export function WorkflowCard({
               onRun(workflow.name);
             }}
             className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-[11px] font-medium text-primary hover:bg-primary/20 transition-colors"
-            title="Configure and run workflow"
+            title={t('workflowsPage.configureAndRun')}
           >
             <Play className="size-3" />
             Run

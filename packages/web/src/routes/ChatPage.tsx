@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { MessageSquarePlus, Search, Plus, Loader2, FolderGit2 } from 'lucide-react';
 import { ChatInterface } from '@/components/chat/ChatInterface';
 import { ConversationItem } from '@/components/conversations/ConversationItem';
@@ -26,6 +27,7 @@ function getInitialWidth(): number {
 }
 
 export function ChatPage(): React.ReactElement {
+  const { t } = useTranslation();
   const { '*': rawConversationId } = useParams();
   const conversationId = rawConversationId ? decodeURIComponent(rawConversationId) : undefined;
 
@@ -189,7 +191,7 @@ export function ChatPage(): React.ReactElement {
             className="flex w-full items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-accent-hover transition-colors"
           >
             <MessageSquarePlus className="h-4 w-4 shrink-0" />
-            New Chat
+            {t('chat.newChat')}
           </button>
         </div>
 
@@ -197,7 +199,7 @@ export function ChatPage(): React.ReactElement {
         <div className="px-3 pb-2">
           <div className="flex items-center justify-between mb-1">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-text-tertiary">
-              Project
+              {t('chat.project')}
             </span>
             <button
               onClick={(): void => {
@@ -206,7 +208,7 @@ export function ChatPage(): React.ReactElement {
                 setAddValue('');
               }}
               className="p-1 rounded hover:bg-surface-elevated transition-colors"
-              title="Add project"
+              title={t('chat.addProject')}
             >
               <Plus className="h-3.5 w-3.5 text-text-tertiary hover:text-primary" />
             </button>
@@ -227,7 +229,7 @@ export function ChatPage(): React.ReactElement {
                       setShowAddInput(false);
                     }
                   }}
-                  placeholder="GitHub URL or local path"
+                  placeholder={t('chat.addProjectPlaceholder')}
                   disabled={addLoading}
                   className="w-full rounded-md border border-border bg-surface-elevated px-2 py-1 text-xs text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none disabled:opacity-50"
                 />
@@ -241,7 +243,7 @@ export function ChatPage(): React.ReactElement {
 
           {isLoadingCodebases ? (
             <div className="flex items-center justify-center py-2">
-              <span className="text-xs text-text-tertiary">Loading...</span>
+              <span className="text-xs text-text-tertiary">{t('common.loading')}</span>
             </div>
           ) : (
             <select
@@ -251,7 +253,7 @@ export function ChatPage(): React.ReactElement {
               }}
               className="w-full rounded-md border border-border bg-surface-elevated px-2 py-1.5 text-xs text-text-primary focus:border-primary focus:outline-none"
             >
-              <option value="">All Projects</option>
+              <option value="">{t('chat.allProjects')}</option>
               {codebases?.map(cb => (
                 <option key={cb.id} value={cb.id}>
                   {cb.name}
@@ -273,7 +275,7 @@ export function ChatPage(): React.ReactElement {
               onChange={(e): void => {
                 setSearchQuery(e.target.value);
               }}
-              placeholder="Search..."
+              placeholder={t('chat.searchPlaceholder')}
               className="w-full rounded-md border border-border bg-surface-elevated py-1.5 pl-7 pr-2 text-xs text-text-primary placeholder:text-text-tertiary focus:border-primary focus:outline-none"
             />
           </div>
@@ -303,8 +305,8 @@ export function ChatPage(): React.ReactElement {
                   )}
                 >
                   {conversations && conversations.length > 0
-                    ? 'No matching conversations'
-                    : 'No conversations yet — start a new chat!'}
+                    ? t('chat.noMatchingConversations')
+                    : t('chat.noConversationsYet')}
                 </span>
               </div>
             )}

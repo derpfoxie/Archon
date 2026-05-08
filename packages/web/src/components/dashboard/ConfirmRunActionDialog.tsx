@@ -1,4 +1,5 @@
 import { useId, useState, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -67,6 +68,7 @@ export function ConfirmRunActionDialog({
   reasonInput,
   onConfirm,
 }: Props): React.ReactElement {
+  const { t } = useTranslation();
   const [reason, setReason] = useState('');
   // useId() so multiple dialog instances on the same page (e.g. side-by-side
   // run cards) don't collide on a shared DOM id.
@@ -106,7 +108,7 @@ export function ConfirmRunActionDialog({
           </div>
         )}
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t('common.actions.cancel')}</AlertDialogCancel>
           <AlertDialogAction
             onClick={(): void => {
               // Caller's onConfirm is fire-and-forget over a parent-level
