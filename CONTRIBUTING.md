@@ -1,24 +1,24 @@
 <p align="right">
-  <b>English</b> | <a href="CONTRIBUTING.zh-CN.md">简体中文</a>
+  <a href="CONTRIBUTING.en.md">English</a> | <b>简体中文</b>
 </p>
 
-# Contributing
+# 贡献指南
 
-Thank you for your interest in contributing to Archon!
+感谢你有兴趣为 Archon 做贡献！
 
-## Getting Started
+## 快速上手
 
-1. Fork the repository
-2. Clone your fork
-3. Install dependencies: `bun install`
-4. Copy `.env.example` to `.env` and configure
-5. Start development: `bun run dev`
+1. Fork 本仓库
+2. 克隆你的 fork
+3. 安装依赖：`bun install`
+4. 把 `.env.example` 复制为 `.env` 并按需配置
+5. 启动开发：`bun run dev`
 
-## Development Workflow
+## 开发流程
 
-### Code Quality
+### 代码质量
 
-Before submitting a PR, ensure:
+提交 PR 之前，请确保：
 
 ```bash
 bun run check:bundled  # Bundled defaults are up to date (see note below)
@@ -31,37 +31,37 @@ bun run test           # All tests (per-package isolation)
 bun run validate
 ```
 
-**Bundled defaults**: If you added, removed, or edited a file under
-`.archon/commands/defaults/` or `.archon/workflows/defaults/`, run
-`bun run generate:bundled` to refresh the embedded bundle before committing.
+**关于内置默认（bundled defaults）：** 如果你新增、删除或修改了
+`.archon/commands/defaults/` 或 `.archon/workflows/defaults/` 下的文件，请在提交前运行
+`bun run generate:bundled` 来刷新内嵌的 bundle。
 
-**Important:** Use `bun run test` (not `bun test` from the repo root) to avoid mock pollution across packages.
+**重要：** 使用 `bun run test`（**不要**在仓库根目录执行 `bun test`），以避免跨包的 mock 污染。
 
-### Commit Messages
+### 提交信息
 
-- Use present tense ("Add feature" not "Added feature")
-- Keep the first line under 72 characters
-- Reference issues when applicable
+- 使用现在时（"Add feature" 而不是 "Added feature"）
+- 第一行不超过 72 字符
+- 涉及 issue 时进行引用
 
-### Pull Requests
+### Pull Request
 
-1. Create a feature branch from `dev`
-2. Make your changes
-3. Ensure all checks pass
-4. Submit a PR using the template at [`.github/PULL_REQUEST_TEMPLATE.md`](./.github/PULL_REQUEST_TEMPLATE.md). GitHub fills it in automatically when you open a PR through the web UI. If you use `gh pr create`, copy the template into the body — leaving it empty or partially filled slows review.
-5. Link the issue your PR addresses with `Closes #<number>` (or `Fixes #<number>` / `Resolves #<number>`) in the description so it auto-closes on merge.
+1. 从 `dev` 分支创建特性分支
+2. 进行修改
+3. 确保所有检查通过
+4. 使用模板 [`.github/PULL_REQUEST_TEMPLATE.md`](./.github/PULL_REQUEST_TEMPLATE.md) 提交 PR。通过 GitHub Web UI 创建 PR 时模板会自动填入；如果你用 `gh pr create`，请把模板内容复制到 body 里——留空或填一半会拖慢评审。
+5. 在描述里用 `Closes #<number>`（或 `Fixes #<number>` / `Resolves #<number>`）关联你修复的 issue，合并时会自动关闭。
 
-## Code Style
+## 代码风格
 
-- TypeScript strict mode is enforced
-- All functions require explicit return types
-- No `any` types without justification
-- Follow existing patterns in the codebase
+- 强制启用 TypeScript strict 模式
+- 所有函数必须显式声明返回类型
+- 不接受没有理由的 `any` 类型
+- 遵循代码库中已有的模式
 
-## Architecture
+## 架构
 
-See [CLAUDE.md](./CLAUDE.md) for detailed architecture documentation.
+详见 [CLAUDE.md](./CLAUDE.md)。
 
-## Questions?
+## 有问题？
 
-Open an [issue](https://github.com/coleam00/Archon/issues) or start a [discussion](https://github.com/coleam00/Archon/discussions).
+请提一个 [issue](https://github.com/coleam00/Archon/issues) 或发起 [discussion](https://github.com/coleam00/Archon/discussions)。
