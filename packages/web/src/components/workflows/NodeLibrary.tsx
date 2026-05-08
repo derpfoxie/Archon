@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { categorizeCommands } from '@/lib/command-categories';
@@ -86,6 +87,7 @@ function CollapsibleSection({
 }
 
 export function NodeLibrary({ commands, isLoading }: NodeLibraryProps): React.ReactElement {
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
 
   const categories = useMemo(() => categorizeCommands(commands), [commands]);
@@ -141,9 +143,9 @@ export function NodeLibrary({ commands, isLoading }: NodeLibraryProps): React.Re
             {filteredCategories.map(category => (
               <CollapsibleSection
                 key={category.name}
-                title={category.name}
+                title={t(`commands.categories.${category.name}`, { defaultValue: category.name })}
                 count={category.commands.length}
-                defaultOpen={category.name === 'Project'}
+                defaultOpen={category.name === 'project'}
               >
                 {category.commands.map(cmd => (
                   <DraggableItem

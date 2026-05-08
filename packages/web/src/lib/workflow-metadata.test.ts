@@ -139,40 +139,38 @@ describe('getWorkflowDisplayName', () => {
 
 describe('getWorkflowCategory', () => {
   test('categorizes review workflows', () => {
-    expect(getWorkflowCategory('archon-comprehensive-pr-review', 'Review a PR')).toBe(
-      'Code Review'
-    );
-    expect(getWorkflowCategory('archon-smart-pr-review', 'Smart PR review')).toBe('Code Review');
+    expect(getWorkflowCategory('archon-comprehensive-pr-review', 'Review a PR')).toBe('codeReview');
+    expect(getWorkflowCategory('archon-smart-pr-review', 'Smart PR review')).toBe('codeReview');
   });
 
   test('categorizes automation workflows', () => {
-    expect(getWorkflowCategory('archon-create-issue', 'Create GitHub issue')).toBe('Automation');
-    expect(getWorkflowCategory('archon-ralph-dag', 'Ralph implementation loop')).toBe('Automation');
+    expect(getWorkflowCategory('archon-create-issue', 'Create GitHub issue')).toBe('automation');
+    expect(getWorkflowCategory('archon-ralph-dag', 'Ralph implementation loop')).toBe('automation');
     expect(getWorkflowCategory('archon-refactor-safely', 'Refactor code safely')).toBe(
-      'Automation'
+      'automation'
     );
   });
 
   test('categorizes CI/CD workflows', () => {
-    expect(getWorkflowCategory('archon-validate-pr', 'Validate PR checks')).toBe('CI/CD');
-    expect(getWorkflowCategory('archon-test-loop-dag', 'Run test loop')).toBe('CI/CD');
+    expect(getWorkflowCategory('archon-validate-pr', 'Validate PR checks')).toBe('cicd');
+    expect(getWorkflowCategory('archon-test-loop-dag', 'Run test loop')).toBe('cicd');
   });
 
   test('does not miscategorize workflows with "ci" as substring', () => {
-    expect(getWorkflowCategory('archon-decision-tree', 'Routes decisions')).toBe('Development');
-    expect(getWorkflowCategory('special-analyzer', 'Classifies problem area')).toBe('Development');
+    expect(getWorkflowCategory('archon-decision-tree', 'Routes decisions')).toBe('development');
+    expect(getWorkflowCategory('special-analyzer', 'Classifies problem area')).toBe('development');
   });
 
   test('returns Development as default for unknown workflows', () => {
-    expect(getWorkflowCategory('my-custom-workflow', '')).toBe('Development');
+    expect(getWorkflowCategory('my-custom-workflow', '')).toBe('development');
   });
 
   test('categorizes development workflows', () => {
     expect(getWorkflowCategory('archon-feature-development', 'Implement a feature')).toBe(
-      'Development'
+      'development'
     );
-    expect(getWorkflowCategory('archon-assist', 'General help')).toBe('Development');
-    expect(getWorkflowCategory('archon-idea-to-pr', 'From idea to PR')).toBe('Development');
+    expect(getWorkflowCategory('archon-assist', 'General help')).toBe('development');
+    expect(getWorkflowCategory('archon-idea-to-pr', 'From idea to PR')).toBe('development');
   });
 });
 
@@ -183,9 +181,9 @@ describe('getWorkflowTags', () => {
     );
     const tags = getWorkflowTags('archon-comprehensive-pr-review', parsed);
 
-    expect(tags).toContain('GitHub');
-    expect(tags).toContain('Review');
-    expect(tags).toContain('Agent');
+    expect(tags).toContain('github');
+    expect(tags).toContain('review');
+    expect(tags).toContain('agent');
   });
 
   test('returns empty array when no tags match', () => {
@@ -197,7 +195,7 @@ describe('getWorkflowTags', () => {
   test('deduplicates tags', () => {
     const parsed = parseWorkflowDescription('Does: review PR on GitHub for GitHub issues');
     const tags = getWorkflowTags('archon-pr-review', parsed);
-    const githubCount = tags.filter(t => t === 'GitHub').length;
+    const githubCount = tags.filter(t => t === 'github').length;
     expect(githubCount).toBeLessThanOrEqual(1);
   });
 
@@ -210,8 +208,8 @@ describe('getWorkflowTags', () => {
   test('falls back to inference when no explicit tags', () => {
     const parsed = parseWorkflowDescription('Does: review PR on GitHub');
     const tags = getWorkflowTags('archon-pr-review', parsed, undefined);
-    expect(tags).toContain('GitHub');
-    expect(tags).toContain('Review');
+    expect(tags).toContain('github');
+    expect(tags).toContain('review');
   });
 
   test('deduplicates explicit tags', () => {
@@ -229,30 +227,30 @@ describe('getWorkflowTags', () => {
 
 describe('getWorkflowIconName', () => {
   test('maps issue/bug workflows to Bug icon', () => {
-    expect(getWorkflowIconName('archon-create-issue', 'Automation')).toBe('Bug');
-    expect(getWorkflowIconName('archon-fix-github-issue', 'Automation')).toBe('Bug');
+    expect(getWorkflowIconName('archon-create-issue', 'automation')).toBe('Bug');
+    expect(getWorkflowIconName('archon-fix-github-issue', 'automation')).toBe('Bug');
   });
 
   test('maps review workflows to Eye icon', () => {
-    expect(getWorkflowIconName('archon-comprehensive-pr-review', 'Code Review')).toBe('Eye');
+    expect(getWorkflowIconName('archon-comprehensive-pr-review', 'codeReview')).toBe('Eye');
   });
 
   test('maps conflict workflows to GitMerge icon', () => {
-    expect(getWorkflowIconName('archon-resolve-conflicts', 'Automation')).toBe('GitMerge');
+    expect(getWorkflowIconName('archon-resolve-conflicts', 'automation')).toBe('GitMerge');
   });
 
   test('maps feature workflows to Rocket icon', () => {
-    expect(getWorkflowIconName('archon-feature-development', 'Development')).toBe('Rocket');
+    expect(getWorkflowIconName('archon-feature-development', 'development')).toBe('Rocket');
   });
 
   test('maps ralph to Bot icon', () => {
-    expect(getWorkflowIconName('archon-ralph-dag', 'Automation')).toBe('Bot');
+    expect(getWorkflowIconName('archon-ralph-dag', 'automation')).toBe('Bot');
   });
 
   test('falls back to category-based icon', () => {
-    expect(getWorkflowIconName('unknown-workflow', 'Code Review')).toBe('Eye');
-    expect(getWorkflowIconName('unknown-workflow', 'CI/CD')).toBe('TestTube');
-    expect(getWorkflowIconName('unknown-workflow', 'Automation')).toBe('Zap');
-    expect(getWorkflowIconName('unknown-workflow', 'Development')).toBe('Rocket');
+    expect(getWorkflowIconName('unknown-workflow', 'codeReview')).toBe('Eye');
+    expect(getWorkflowIconName('unknown-workflow', 'cicd')).toBe('TestTube');
+    expect(getWorkflowIconName('unknown-workflow', 'automation')).toBe('Zap');
+    expect(getWorkflowIconName('unknown-workflow', 'development')).toBe('Rocket');
   });
 });

@@ -1,4 +1,70 @@
 {
+  "common": {
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save",
+      "delete": "Delete",
+      "edit": "Edit",
+      "retry": "Retry",
+      "confirm": "Confirm",
+      "add": "Add",
+      "remove": "Remove",
+      "search": "Search",
+      "close": "Close"
+    },
+    "status": {
+      "running": "Running",
+      "completed": "Completed",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "pending": "Pending",
+      "paused": "Paused"
+    },
+    "time": {
+      "ms": "ms",
+      "s": "s",
+      "m": "m"
+    },
+    "errors": {
+      "failedTo": "Failed to {{action}}",
+      "couldNotLoad": "Could not load {{entity}}",
+      "retrying": "{{entity}} failed to load — retrying",
+      "unknown": "Unknown error"
+    },
+    "loading": "Loading...",
+    "empty": "No items"
+  },
+  "workflows": {
+    "categories": {
+      "all": "All",
+      "cicd": "CI/CD",
+      "codeReview": "Code Review",
+      "automation": "Automation",
+      "development": "Development"
+    },
+    "tags": {
+      "github": "GitHub",
+      "agent": "Agent",
+      "review": "Review",
+      "testing": "Testing",
+      "refactor": "Refactor",
+      "git": "Git",
+      "planning": "Planning"
+    }
+  },
+  "commands": {
+    "categories": {
+      "investigation": "Investigation",
+      "planning": "Planning",
+      "implementation": "Implementation",
+      "codeReview": "Code Review",
+      "prLifecycle": "PR Lifecycle",
+      "reviewSynthesis": "Review Synthesis",
+      "validation": "Validation",
+      "project": "Project",
+      "utilities": "Utilities"
+    }
+  },
   "nav": {
     "chat": "Chat",
     "dashboard": "Dashboard",

@@ -1,4 +1,70 @@
 {
+  "common": {
+    "actions": {
+      "cancel": "取消",
+      "save": "保存",
+      "delete": "删除",
+      "edit": "编辑",
+      "retry": "重试",
+      "confirm": "确认",
+      "add": "添加",
+      "remove": "移除",
+      "search": "搜索",
+      "close": "关闭"
+    },
+    "status": {
+      "running": "运行中",
+      "completed": "已完成",
+      "failed": "失败",
+      "cancelled": "已取消",
+      "pending": "等待中",
+      "paused": "已暂停"
+    },
+    "time": {
+      "ms": "毫秒",
+      "s": "秒",
+      "m": "分"
+    },
+    "errors": {
+      "failedTo": "{{action}}失败",
+      "couldNotLoad": "无法加载{{entity}}",
+      "retrying": "{{entity}} 加载失败——重试中",
+      "unknown": "未知错误"
+    },
+    "loading": "加载中...",
+    "empty": "暂无内容"
+  },
+  "workflows": {
+    "categories": {
+      "all": "全部",
+      "cicd": "CI/CD",
+      "codeReview": "代码评审",
+      "automation": "自动化",
+      "development": "开发"
+    },
+    "tags": {
+      "github": "GitHub",
+      "agent": "Agent",
+      "review": "评审",
+      "testing": "测试",
+      "refactor": "重构",
+      "git": "Git",
+      "planning": "规划"
+    }
+  },
+  "commands": {
+    "categories": {
+      "investigation": "调研",
+      "planning": "规划",
+      "implementation": "实现",
+      "codeReview": "代码评审",
+      "prLifecycle": "PR 生命周期",
+      "reviewSynthesis": "评审汇总",
+      "validation": "验证",
+      "project": "项目",
+      "utilities": "工具"
+    }
+  },
   "nav": {
     "chat": "对话",
     "dashboard": "总控台",

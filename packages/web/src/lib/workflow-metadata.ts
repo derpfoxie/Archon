@@ -106,15 +106,20 @@ export function getWorkflowDisplayName(name: string): string {
     .join(' ');
 }
 
-/** Workflow category for filtering. */
-export type WorkflowCategory = 'All' | 'CI/CD' | 'Code Review' | 'Automation' | 'Development';
+/**
+ * Workflow category as a stable identifier.
+ *
+ * These are i18n key suffixes — UI renders them via `t('workflows.categories.<key>')`.
+ * Keep this in sync with `workflows.categories.*` in i18n resource files.
+ */
+export type WorkflowCategory = 'all' | 'cicd' | 'codeReview' | 'automation' | 'development';
 
 export const CATEGORIES: WorkflowCategory[] = [
-  'All',
-  'CI/CD',
-  'Code Review',
-  'Automation',
-  'Development',
+  'all',
+  'cicd',
+  'codeReview',
+  'automation',
+  'development',
 ];
 
 /**
@@ -124,17 +129,14 @@ export const CATEGORIES: WorkflowCategory[] = [
 export function getWorkflowCategory(name: string, description: string): WorkflowCategory {
   const lower = `${name} ${description}`.toLowerCase();
 
-  // Code Review
   if (lower.includes('review')) {
-    return 'Code Review';
+    return 'codeReview';
   }
 
-  // CI/CD — validation, testing (word-boundary for short tokens)
   if (lower.includes('validate') || lower.includes('test-loop') || /\bci\b/.test(lower)) {
-    return 'CI/CD';
+    return 'cicd';
   }
 
-  // Automation — issue creation, conflict resolution, refactoring
   if (
     lower.includes('create-issue') ||
     lower.includes('resolve-conflict') ||
@@ -142,10 +144,9 @@ export function getWorkflowCategory(name: string, description: string): Workflow
     lower.includes('fix-github-issue') ||
     lower.includes('ralph')
   ) {
-    return 'Automation';
+    return 'automation';
   }
 
-  // Development — feature, implement, plan, architect, assist
   if (
     lower.includes('feature') ||
     lower.includes('implement') ||
@@ -155,11 +156,17 @@ export function getWorkflowCategory(name: string, description: string): Workflow
     lower.includes('idea-to-pr') ||
     lower.includes('remotion')
   ) {
-    return 'Development';
+    return 'development';
   }
 
-  return 'Development';
+  return 'development';
 }
+
+/**
+ * Built-in inferred-tag identifiers. UI renders via `t('workflows.tags.<key>', { defaultValue: tag })`
+ * so user-defined tags pass through verbatim while built-in tags get translated.
+ */
+type BuiltInTag = 'github' | 'agent' | 'review' | 'testing' | 'refactor' | 'git' | 'planning';
 
 /**
  * Derive tags from the workflow name and parsed description.
@@ -175,21 +182,20 @@ export function getWorkflowTags(
     return [...new Set(explicitTags)];
   }
 
-  const tags: string[] = [];
+  const tags: BuiltInTag[] = [];
   const text = `${name} ${parsed.raw}`.toLowerCase();
 
-  if (text.includes('github') || text.includes('issue') || text.includes('pr')) tags.push('GitHub');
+  if (text.includes('github') || text.includes('issue') || text.includes('pr')) tags.push('github');
   if (text.includes('parallel') || text.includes('agent') || text.includes('ralph'))
-    tags.push('Agent');
-  if (text.includes('review')) tags.push('Review');
+    tags.push('agent');
+  if (text.includes('review')) tags.push('review');
   if (text.includes('test') || text.includes('validation') || text.includes('validate'))
-    tags.push('Testing');
-  if (text.includes('refactor')) tags.push('Refactor');
-  if (text.includes('conflict') || text.includes('merge')) tags.push('Git');
+    tags.push('testing');
+  if (text.includes('refactor')) tags.push('refactor');
+  if (text.includes('conflict') || text.includes('merge')) tags.push('git');
   if (text.includes('plan') || text.includes('prd') || text.includes('architect'))
-    tags.push('Planning');
+    tags.push('planning');
 
-  // Deduplicate
   return [...new Set(tags)];
 }
 
@@ -225,15 +231,14 @@ export function getWorkflowIconName(name: string, category: WorkflowCategory): W
   if (lower.includes('ralph')) return 'Bot';
   if (lower.includes('assist')) return 'Wrench';
 
-  // Fall back to category
   switch (category) {
-    case 'Code Review':
+    case 'codeReview':
       return 'Eye';
-    case 'CI/CD':
+    case 'cicd':
       return 'TestTube';
-    case 'Automation':
+    case 'automation':
       return 'Zap';
-    case 'Development':
+    case 'development':
       return 'Rocket';
     default:
       return 'Workflow';

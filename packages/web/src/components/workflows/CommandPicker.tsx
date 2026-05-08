@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronRight, Search } from 'lucide-react';
 import type { CommandEntry } from '@/lib/api';
 import { categorizeCommands } from '@/lib/command-categories';
@@ -16,6 +17,7 @@ export function CommandPicker({
   onSelect,
   onClose,
 }: CommandPickerProps): React.ReactElement {
+  const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -97,7 +99,7 @@ export function CommandPicker({
                   <ChevronDown className="size-3 text-text-tertiary shrink-0" />
                 )}
                 <span className="text-[10px] font-semibold text-text-secondary uppercase tracking-wide">
-                  {category.name}
+                  {t(`commands.categories.${category.name}`, { defaultValue: category.name })}
                 </span>
                 <span className="text-[10px] text-text-tertiary">({category.commands.length})</span>
               </button>

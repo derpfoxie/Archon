@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { Search, X } from 'lucide-react';
 import { listWorkflows, createConversation, runWorkflow, deleteConversation } from '@/lib/api';
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,8 @@ export function WorkflowList(): React.ReactElement {
   const [running, setRunning] = useState(false);
   const [runError, setRunError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<WorkflowCategory>('All');
+  const { t } = useTranslation();
+  const [activeCategory, setActiveCategory] = useState<WorkflowCategory>('all');
   const { codebases, selectedProjectId } = useProject();
   const [localProjectId, setLocalProjectId] = useState<string | null>(selectedProjectId);
   const messageInputRef = useRef<HTMLInputElement>(null);
@@ -105,7 +107,7 @@ export function WorkflowList(): React.ReactElement {
           if (!matchesName && !matchesDesc) return false;
         }
         // Category filter
-        if (activeCategory !== 'All') {
+        if (activeCategory !== 'all') {
           const cat = getWorkflowCategory(wf.name, wf.description ?? '');
           if (cat !== activeCategory) return false;
         }
@@ -164,7 +166,7 @@ export function WorkflowList(): React.ReactElement {
                       : 'bg-surface-elevated text-text-secondary hover:text-text-primary'
                   }`}
                 >
-                  {cat}
+                  {t(`workflows.categories.${cat}`)}
                 </button>
               ))}
             </div>

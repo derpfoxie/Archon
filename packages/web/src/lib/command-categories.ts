@@ -1,6 +1,10 @@
 import type { CommandEntry } from '@/lib/api';
 
 export interface CommandCategory {
+  /**
+   * Stable identifier key. UI renders via `t('commands.categories.<name>')`.
+   * Keep in sync with `commands.categories.*` in i18n resource files.
+   */
   name: string;
   commands: CommandEntry[];
 }
@@ -8,19 +12,19 @@ export interface CommandCategory {
 /** Prefix-to-category mapping. Checked after stripping the `archon-` prefix. */
 const CATEGORY_PREFIXES: readonly { category: string; prefixes: string[] }[] = [
   {
-    category: 'Investigation',
+    category: 'investigation',
     prefixes: ['investigate', 'web-research'],
   },
   {
-    category: 'Planning',
+    category: 'planning',
     prefixes: ['create-plan', 'confirm-plan', 'plan-setup', 'ralph-prd'],
   },
   {
-    category: 'Implementation',
+    category: 'implementation',
     prefixes: ['implement', 'fix-issue', 'implement-tasks', 'implement-issue'],
   },
   {
-    category: 'Code Review',
+    category: 'codeReview',
     prefixes: [
       'code-review',
       'error-handling',
@@ -31,15 +35,15 @@ const CATEGORY_PREFIXES: readonly { category: string; prefixes: string[] }[] = [
     ],
   },
   {
-    category: 'PR Lifecycle',
+    category: 'prLifecycle',
     prefixes: ['create-pr', 'finalize-pr', 'post-review', 'sync-pr'],
   },
   {
-    category: 'Review Synthesis',
+    category: 'reviewSynthesis',
     prefixes: ['synthesize-review', 'implement-review', 'auto-fix', 'self-fix'],
   },
   {
-    category: 'Validation',
+    category: 'validation',
     prefixes: ['validate'],
   },
 ];
@@ -57,7 +61,7 @@ function findCategory(name: string): string {
       }
     }
   }
-  return 'Utilities';
+  return 'utilities';
 }
 
 /**
@@ -82,12 +86,10 @@ export function categorizeCommands(commands: CommandEntry[]): CommandCategory[] 
 
   const result: CommandCategory[] = [];
 
-  // Project commands first
   if (projectCommands.length > 0) {
-    result.push({ name: 'Project', commands: projectCommands });
+    result.push({ name: 'project', commands: projectCommands });
   }
 
-  // Named categories in definition order, then Utilities last
   const orderedNames = CATEGORY_PREFIXES.map(c => c.category);
   for (const name of orderedNames) {
     const cmds = categoryMap.get(name);
@@ -96,10 +98,9 @@ export function categorizeCommands(commands: CommandEntry[]): CommandCategory[] 
     }
   }
 
-  // Utilities last (anything that didn't match a named category)
-  const utilities = categoryMap.get('Utilities');
+  const utilities = categoryMap.get('utilities');
   if (utilities && utilities.length > 0) {
-    result.push({ name: 'Utilities', commands: utilities });
+    result.push({ name: 'utilities', commands: utilities });
   }
 
   return result;

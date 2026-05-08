@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import {
   Bug,
   GitMerge,
@@ -52,6 +53,7 @@ export function WorkflowCard({
   onToggle,
   onRun,
 }: WorkflowCardProps): React.ReactElement {
+  const { t } = useTranslation();
   const parsed = parseWorkflowDescription(workflow.description ?? '');
   const displayName = getWorkflowDisplayName(workflow.name);
   const category = getWorkflowCategory(workflow.name, workflow.description ?? '');
@@ -174,7 +176,7 @@ export function WorkflowCard({
               key={tag}
               className="inline-block rounded-full bg-surface-elevated px-2 py-0.5 text-[10px] font-medium text-text-secondary"
             >
-              #{tag}
+              #{t(`workflows.tags.${tag}`, { defaultValue: tag })}
             </span>
           ))}
         </div>
