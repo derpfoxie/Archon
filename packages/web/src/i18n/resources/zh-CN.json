@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "chat": "对话",
+    "dashboard": "总控台",
+    "workflows": "工作流",
+    "settings": "设置",
+    "workflowsRunning_other": "{{count}} 个工作流运行中",
+    "updateAvailable": "v{{version}} 可用"
+  },
+  "settings": {
+    "systemHealth": "系统状态",
+    "loading": "加载中...",
+    "status": "状态",
+    "adapter": "适配器",
+    "database": "数据库",
+    "active": "运行中",
+    "queued": "排队中"
+  },
+  "errors": {
+    "boundaryTitle": "出错了",
+    "boundaryMessage": "发生了意外错误。",
+    "reload": "重新加载页面"
+  },
+  "language": {
+    "label": "语言"
+  }
+}

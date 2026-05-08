@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Header } from '@/components/layout/Header';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -43,39 +44,40 @@ function SystemHealthSection({
     | undefined;
   database: string | undefined;
 }): React.ReactElement {
+  const { t } = useTranslation();
   const gitCommit = import.meta.env.VITE_GIT_COMMIT as string;
   return (
     <Card>
       <CardHeader>
-        <CardTitle>System Health</CardTitle>
+        <CardTitle>{t('settings.systemHealth')}</CardTitle>
       </CardHeader>
       <CardContent>
         {!health ? (
-          <div className="text-sm text-muted-foreground">Loading...</div>
+          <div className="text-sm text-muted-foreground">{t('settings.loading')}</div>
         ) : (
           <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-3">
             <div>
-              <span className="text-muted-foreground">Status: </span>
+              <span className="text-muted-foreground">{t('settings.status')}: </span>
               <Badge variant={health.status === 'ok' ? 'default' : 'destructive'}>
                 {health.status}
               </Badge>
             </div>
             <div>
-              <span className="text-muted-foreground">Adapter: </span>
+              <span className="text-muted-foreground">{t('settings.adapter')}: </span>
               <span className="font-medium">{health.adapter}</span>
             </div>
             <div>
-              <span className="text-muted-foreground">Database: </span>
+              <span className="text-muted-foreground">{t('settings.database')}: </span>
               <span className="font-medium">{database ?? 'unknown'}</span>
             </div>
             <div>
-              <span className="text-muted-foreground">Active: </span>
+              <span className="text-muted-foreground">{t('settings.active')}: </span>
               <span className="font-medium">
                 {health.concurrency.active}/{health.concurrency.maxConcurrent}
               </span>
             </div>
             <div>
-              <span className="text-muted-foreground">Queued: </span>
+              <span className="text-muted-foreground">{t('settings.queued')}: </span>
               <span className="font-medium">{health.concurrency.queuedTotal}</span>
             </div>
             <div>

@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "chat": "Chat",
+    "dashboard": "Dashboard",
+    "workflows": "Workflows",
+    "settings": "Settings",
+    "workflowsRunning_one": "{{count}} workflow running",
+    "workflowsRunning_other": "{{count}} workflows running",
+    "updateAvailable": "v{{version}} available"
+  },
+  "settings": {
+    "systemHealth": "System Health",
+    "loading": "Loading...",
+    "status": "Status",
+    "adapter": "Adapter",
+    "database": "Database",
+    "active": "Active",
+    "queued": "Queued"
+  },
+  "errors": {
+    "boundaryTitle": "Something went wrong",
+    "boundaryMessage": "An unexpected error occurred.",
+    "reload": "Reload page"
+  },
+  "language": {
+    "label": "Language"
+  }
+}

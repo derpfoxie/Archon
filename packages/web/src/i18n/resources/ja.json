@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "chat": "チャット",
+    "dashboard": "ダッシュボード",
+    "workflows": "ワークフロー",
+    "settings": "設定",
+    "workflowsRunning_other": "{{count}} 件のワークフローが実行中",
+    "updateAvailable": "v{{version}} が利用可能"
+  },
+  "settings": {
+    "systemHealth": "システム状態",
+    "loading": "読み込み中...",
+    "status": "ステータス",
+    "adapter": "アダプター",
+    "database": "データベース",
+    "active": "実行中",
+    "queued": "待機中"
+  },
+  "errors": {
+    "boundaryTitle": "エラーが発生しました",
+    "boundaryMessage": "予期しないエラーが発生しました。",
+    "reload": "ページを再読み込み"
+  },
+  "language": {
+    "label": "言語"
+  }
+}

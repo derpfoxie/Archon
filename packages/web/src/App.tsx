@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import type { ReactNode, ErrorInfo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Layout } from '@/components/layout/Layout';
@@ -37,27 +38,32 @@ class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryStat
 
   render(): ReactNode {
     if (this.state.hasError) {
-      return (
-        <div className="flex h-screen items-center justify-center bg-zinc-950 p-8">
-          <div className="max-w-md text-center">
-            <h1 className="mb-2 text-xl font-semibold text-zinc-100">Something went wrong</h1>
-            <p className="mb-4 text-sm text-zinc-400">
-              {this.state.error?.message ?? 'An unexpected error occurred.'}
-            </p>
-            <button
-              onClick={(): void => {
-                window.location.reload();
-              }}
-              className="rounded-md bg-zinc-800 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-700"
-            >
-              Reload page
-            </button>
-          </div>
-        </div>
-      );
+      return <ErrorFallback error={this.state.error} />;
     }
     return this.props.children;
   }
+}
+
+function ErrorFallback({ error }: { error: Error | null }): React.ReactElement {
+  const { t } = useTranslation();
+  return (
+    <div className="flex h-screen items-center justify-center bg-zinc-950 p-8">
+      <div className="max-w-md text-center">
+        <h1 className="mb-2 text-xl font-semibold text-zinc-100">{t('errors.boundaryTitle')}</h1>
+        <p className="mb-4 text-sm text-zinc-400">
+          {error?.message ?? t('errors.boundaryMessage')}
+        </p>
+        <button
+          onClick={(): void => {
+            window.location.reload();
+          }}
+          className="rounded-md bg-zinc-800 px-4 py-2 text-sm text-zinc-200 hover:bg-zinc-700"
+        >
+          {t('errors.reload')}
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export function App(): React.ReactElement {

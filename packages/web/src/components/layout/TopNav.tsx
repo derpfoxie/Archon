@@ -1,17 +1,21 @@
 import { NavLink, Link } from 'react-router';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { LayoutDashboard, MessageSquare, Workflow, Settings } from 'lucide-react';
 import { listDashboardRuns, getUpdateCheck } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 const tabs = [
-  { to: '/chat', end: false, icon: MessageSquare, label: 'Chat' },
-  { to: '/dashboard', end: true, icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/workflows', end: false, icon: Workflow, label: 'Workflows' },
-  { to: '/settings', end: false, icon: Settings, label: 'Settings' },
+  { to: '/chat', end: false, icon: MessageSquare, labelKey: 'nav.chat' },
+  { to: '/dashboard', end: true, icon: LayoutDashboard, labelKey: 'nav.dashboard' },
+  { to: '/workflows', end: false, icon: Workflow, labelKey: 'nav.workflows' },
+  { to: '/settings', end: false, icon: Settings, labelKey: 'nav.settings' },
 ] as const;
 
 export function TopNav(): React.ReactElement {
+  const { t } = useTranslation();
+
   // We only need `counts.running` — a server-side aggregate independent of
   // the `runs` array. `limit: 1` minimises the `runs` payload that the API
   // returns alongside the counts (we discard it).
@@ -40,7 +44,7 @@ export function TopNav(): React.ReactElement {
         <span className="text-sm font-semibold text-text-primary">Archon</span>
       </Link>
 
-      {tabs.map(({ to, end, icon: Icon, label }) => (
+      {tabs.map(({ to, end, icon: Icon, labelKey }) => (
         <NavLink
           key={to}
           to={to}
@@ -55,32 +59,35 @@ export function TopNav(): React.ReactElement {
           }
         >
           <Icon className="h-4 w-4" />
-          {label}
+          {t(labelKey)}
           {to === '/dashboard' && runningCount > 0 && (
             <span
               className="ml-1 inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-medium text-primary-foreground"
-              aria-label={`${runningCount} workflows running`}
+              aria-label={t('nav.workflowsRunning', { count: runningCount })}
             >
               {runningCount}
             </span>
           )}
         </NavLink>
       ))}
-      <span className="ml-auto text-xs text-text-secondary">
-        v{import.meta.env.VITE_APP_VERSION as string}
-        {updateCheck?.updateAvailable && updateCheck.releaseUrl && (
-          <a
-            href={updateCheck.releaseUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-1.5 inline-flex items-center gap-1 text-xs text-primary hover:underline"
-            title={`v${updateCheck.latestVersion} available`}
-          >
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />v
-            {updateCheck.latestVersion}
-          </a>
-        )}
-      </span>
+      <div className="ml-auto flex items-center gap-2">
+        <span className="text-xs text-text-secondary">
+          v{import.meta.env.VITE_APP_VERSION as string}
+          {updateCheck?.updateAvailable && updateCheck.releaseUrl && (
+            <a
+              href={updateCheck.releaseUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-1.5 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+              title={t('nav.updateAvailable', { version: updateCheck.latestVersion })}
+            >
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />v
+              {updateCheck.latestVersion}
+            </a>
+          )}
+        </span>
+        <LanguageSwitcher />
+      </div>
     </nav>
   );
 }
