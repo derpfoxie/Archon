@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import type { DagFlowNode } from '@/components/workflows/DagNodeComponent';
 import type { Edge } from '@xyflow/react';
 import { hasCycle } from '@/lib/dag-layout';
@@ -20,14 +22,15 @@ const SEVERITY_ORDER: Record<ValidationIssue['severity'], number> = {
 function getInstantIssues(
   workflowName: string,
   workflowDescription: string,
-  nodes: DagFlowNode[]
+  nodes: DagFlowNode[],
+  t: TFunction
 ): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
 
   if (!workflowName.trim()) {
     issues.push({
       severity: 'error',
-      message: 'Workflow name is required',
+      message: t('workflowsBuilder.validation.workflowNameRequired'),
       field: 'name',
     });
   }
@@ -35,7 +38,7 @@ function getInstantIssues(
   if (!workflowDescription.trim()) {
     issues.push({
       severity: 'error',
-      message: 'Workflow description is required',
+      message: t('workflowsBuilder.validation.workflowDescriptionRequired'),
       field: 'description',
     });
   }
@@ -43,7 +46,7 @@ function getInstantIssues(
   if (nodes.length === 0) {
     issues.push({
       severity: 'error',
-      message: 'At least one node is required',
+      message: t('workflowsBuilder.validation.atLeastOneNode'),
     });
   }
 
@@ -51,19 +54,19 @@ function getInstantIssues(
     if (node.data.nodeType === 'bash' && !node.data.bashScript?.trim()) {
       issues.push({
         severity: 'error',
-        message: `Node "${node.data.id}": bash script cannot be empty`,
+        message: t('workflowsBuilder.validation.bashEmpty', { id: node.data.id }),
         nodeId: node.data.id,
         field: 'bashScript',
-        suggestion: 'Enter a bash script for this node',
+        suggestion: t('workflowsBuilder.validation.enterBashScript'),
       });
     }
     if (node.data.nodeType === 'prompt' && !node.data.promptText?.trim()) {
       issues.push({
         severity: 'error',
-        message: `Node "${node.data.id}": prompt cannot be empty`,
+        message: t('workflowsBuilder.validation.promptEmpty', { id: node.data.id }),
         nodeId: node.data.id,
         field: 'promptText',
-        suggestion: 'Enter a prompt for this node',
+        suggestion: t('workflowsBuilder.validation.enterPrompt'),
       });
     }
   }
@@ -71,7 +74,7 @@ function getInstantIssues(
   return issues;
 }
 
-function getDebouncedIssues(nodes: DagFlowNode[], edges: Edge[]): ValidationIssue[] {
+function getDebouncedIssues(nodes: DagFlowNode[], edges: Edge[], t: TFunction): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
   const nodeIds = new Set(nodes.map(n => n.data.id));
 
@@ -85,10 +88,10 @@ function getDebouncedIssues(nodes: DagFlowNode[], edges: Edge[]): ValidationIssu
     if (count > 1) {
       issues.push({
         severity: 'error',
-        message: `Duplicate node ID "${id}" (appears ${count} times)`,
+        message: t('workflowsBuilder.validation.duplicateNodeId', { id, count }),
         nodeId: id,
         field: 'id',
-        suggestion: 'Each node must have a unique ID',
+        suggestion: t('workflowsBuilder.validation.uniqueIdSuggestion'),
       });
     }
   }
@@ -98,7 +101,7 @@ function getDebouncedIssues(nodes: DagFlowNode[], edges: Edge[]): ValidationIssu
     if (!nodeIds.has(edge.source)) {
       issues.push({
         severity: 'error',
-        message: `Edge references non-existent source node "${edge.source}"`,
+        message: t('workflowsBuilder.validation.edgeSourceMissing', { source: edge.source }),
         nodeId: edge.target,
         field: 'depends_on',
       });
@@ -106,7 +109,7 @@ function getDebouncedIssues(nodes: DagFlowNode[], edges: Edge[]): ValidationIssu
     if (!nodeIds.has(edge.target)) {
       issues.push({
         severity: 'error',
-        message: `Edge references non-existent target node "${edge.target}"`,
+        message: t('workflowsBuilder.validation.edgeTargetMissing', { target: edge.target }),
         nodeId: edge.source,
         field: 'depends_on',
       });
@@ -118,10 +121,10 @@ function getDebouncedIssues(nodes: DagFlowNode[], edges: Edge[]): ValidationIssu
     if (edge.source === edge.target) {
       issues.push({
         severity: 'error',
-        message: `Node "${edge.source}" has a self-loop dependency`,
+        message: t('workflowsBuilder.validation.selfLoop', { id: edge.source }),
         nodeId: edge.source,
         field: 'depends_on',
-        suggestion: 'A node cannot depend on itself',
+        suggestion: t('workflowsBuilder.validation.noSelfDep'),
       });
     }
   }
@@ -130,8 +133,8 @@ function getDebouncedIssues(nodes: DagFlowNode[], edges: Edge[]): ValidationIssu
   if (hasCycle(nodeIds, edges)) {
     issues.push({
       severity: 'error',
-      message: 'Cycle detected in workflow graph',
-      suggestion: 'Remove circular dependencies between nodes',
+      message: t('workflowsBuilder.validation.cycleDetected'),
+      suggestion: t('workflowsBuilder.validation.removeCircular'),
     });
   }
 
@@ -149,9 +152,12 @@ function getDebouncedIssues(nodes: DagFlowNode[], edges: Edge[]): ValidationIssu
         if (!nodeIds.has(referencedId)) {
           issues.push({
             severity: 'warning',
-            message: `Node "${node.data.id}" references "$${referencedId}.output" but node "${referencedId}" does not exist`,
+            message: t('workflowsBuilder.validation.outputRefMissing', {
+              node: node.data.id,
+              ref: referencedId,
+            }),
             nodeId: node.data.id,
-            suggestion: `Check that node ID "${referencedId}" is correct`,
+            suggestion: t('workflowsBuilder.validation.checkNodeId', { ref: referencedId }),
           });
         }
       }
@@ -167,6 +173,7 @@ export function useBuilderValidation(
   nodes: DagFlowNode[],
   edges: Edge[]
 ): ValidationIssue[] {
+  const { t } = useTranslation();
   const [debouncedIssues, setDebouncedIssues] = useState<ValidationIssue[]>([]);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -177,7 +184,7 @@ export function useBuilderValidation(
     }
 
     timerRef.current = setTimeout(() => {
-      const issues = getDebouncedIssues(nodes, edges);
+      const issues = getDebouncedIssues(nodes, edges, t);
       setDebouncedIssues(issues);
       timerRef.current = null;
     }, 300);
@@ -187,10 +194,10 @@ export function useBuilderValidation(
         clearTimeout(timerRef.current);
       }
     };
-  }, [nodes, edges]);
+  }, [nodes, edges, t]);
 
   // Instant checks (every render)
-  const instantIssues = getInstantIssues(workflowName, workflowDescription, nodes);
+  const instantIssues = getInstantIssues(workflowName, workflowDescription, nodes, t);
 
   // Combine and sort by severity (errors first)
   const allIssues = [...instantIssues, ...debouncedIssues];

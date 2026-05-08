@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "disclaimer": "Japanese translations are machine-generated. Native-speaker contributions welcome — see packages/web/src/i18n/README.md."
+    "disclaimer": "Japanese translations are machine-generated and have been manually reviewed once. Native-speaker contributions are still welcome — see packages/web/src/i18n/README.md."
   },
   "common": {
     "actions": {
@@ -102,14 +102,14 @@
       "dropFilesPlaceholder": "ここにファイルをドロップ...",
       "attachFile": "ファイルを添付",
       "removeFile": "{{name}} を削除",
-      "maxFiles": "メッセージ最大 {{count}} ファイル",
+      "maxFiles": "1 メッセージにつき最大 {{count}} ファイルまでです",
       "fileTooBig": "\"{{name}}\" は 10 MB 制限を超えています",
       "fileTypeUnsupported": "\"{{name}}\" はサポートされていないファイル形式です"
     },
     "messageList": {
-      "workflowFailed": "ワークフロー失敗",
+      "workflowFailed": "ワークフローが失敗しました",
       "workflowCancelled": "ワークフローがキャンセルされました",
-      "workflowComplete": "ワークフロー完了",
+      "workflowComplete": "ワークフローが完了しました",
       "showLess": "折りたたむ",
       "showMore": "もっと見る",
       "emptyPrompt": "メッセージを送信してチャットを開始",
@@ -119,42 +119,48 @@
       "projectLabel": "プロジェクト: {{name}}"
     },
     "progress": {
-      "starting": "開始中...",
+      "starting": "起動中...",
       "nodes": "{{completed}}/{{total}} ノード",
-      "waitingForApproval": "承認待ち",
+      "waitingForApproval": "承認待ちです",
       "approve": "承認",
       "reject": "却下",
       "rejectTitle": "ワークフローを却下しますか？",
       "rejectReasonLabel": "理由 (任意)",
-      "rejectReasonPlaceholder": "却下理由？on_reject プロンプトに渡されます。",
+      "rejectReasonPlaceholder": "却下理由を入力してください。on_reject プロンプトに渡されます。",
       "actionFailed": "操作に失敗しました — もう一度お試しください",
       "viewFullScreen": "フルスクリーン表示 →"
     },
     "interface": {
       "newChatTitle": "新しいチャット",
       "messageDataCorrupted": "メッセージデータが破損しています",
+      "lostConnection": "サーバーへの接続が切れました。ページを再読み込みしてください。",
+      "refreshPageAction": "ページを再読み込み",
+      "checkServerAction": "サーバーが稼働しているか確認",
+      "malformedResponse": "サーバーから不正な応答を受信しました",
+      "refreshIfStuck": "チャットが停止しているようならページを再読み込みしてください",
+      "handlerFailed": "{{type}} イベントの処理に失敗しました。UI の状態が同期されていない可能性があります。",
       "loadMessageHistoryFailed": "メッセージ履歴の読み込みに失敗しました。ページを再読み込みしてください。",
       "refreshPage": "ページを再読み込み",
       "createConversationFailed": "会話の作成に失敗しました。もう一度お試しください。",
       "sendMessageFailed": "メッセージの送信に失敗しました。もう一度お試しください。",
       "loadConversationsFailed": "会話の読み込みに失敗しました",
       "loadProjectsFailed": "プロジェクトの読み込みに失敗しました",
-      "platformContinuationComingSoon": "他のプラットフォームの会話を Web UI で続けるのは近日対応"
+      "platformContinuationComingSoon": "他プラットフォームの会話を Web UI で続行する機能は近日対応予定です"
     }
   },
   "dashboard": {
     "title": "ミッションコントロール",
-    "filterAll": "全件: {{count}}",
+    "filterAll": "すべて: {{count}}",
     "filterStatus": "{{status}}: {{count}}",
     "allProjects": "すべてのプロジェクト",
     "rangeToday": "今日",
     "rangeLast7Days": "過去 7 日",
     "rangeLast30Days": "過去 30 日",
     "rangeAllTime": "全期間",
-    "capacity": "容量: {{active}}/{{max}} アクティブ",
+    "capacity": "容量: {{active}}/{{max}} 稼働中",
     "lastUpdated": "最終更新 {{time}}",
     "loadFailed": "ワークフロー実行の読み込みに失敗しました",
-    "noRuns": "ワークフロー実行が見つかりません",
+    "noRuns": "ワークフローの実行履歴が見つかりません",
     "activeWorkflows": "実行中のワークフロー",
     "historyTitle": "履歴",
     "showing": "{{from}}–{{to}} 件目を表示（全 {{total}} 件）",
@@ -184,9 +190,9 @@
     "card": {
       "nodeProgress": "{{completed}}/{{total}} ノード",
       "nodeProgressNoTotal": "{{completed}} ノード",
-      "nodesSucceeded": "{{completed}}/{{total}} ノード成功",
-      "nodesFailed": "{{count}} 失敗",
-      "nodesSkipped": "{{count}} スキップ",
+      "nodesSucceeded": "{{completed}}/{{total}} ノードが成功",
+      "nodesFailed": "{{count}} 件失敗",
+      "nodesSkipped": "{{count}} 件スキップ",
       "toolDoneSuffix": "完了",
       "platformUnknown": "不明",
       "unknownProject": "不明なプロジェクト",
@@ -200,7 +206,7 @@
       "rejectTitle": "ワークフローを却下？",
       "rejectConfirm": "却下",
       "rejectReasonLabel": "理由 (任意)",
-      "rejectReasonPlaceholder": "却下理由？on_reject プロンプトに渡されます。",
+      "rejectReasonPlaceholder": "却下理由を入力してください。on_reject プロンプトに渡されます。",
       "resume": "再開",
       "abandon": "放棄",
       "abandonTitle": "ワークフローを放棄？",
@@ -209,7 +215,7 @@
       "cancelTitle": "ワークフローをキャンセル？",
       "cancelConfirm": "ワークフローをキャンセル",
       "delete": "削除",
-      "deleteTitle": "ワークフロー実行を削除？",
+      "deleteTitle": "ワークフロー実行を削除しますか？",
       "deleteConfirm": "削除"
     }
   },
@@ -265,7 +271,7 @@
   },
   "sidebarChat": {
     "removeProject": "プロジェクトを削除",
-    "removeProjectTitle": "プロジェクトを削除？",
+    "removeProjectTitle": "プロジェクトを削除しますか？",
     "remove": "削除",
     "runWorkflow": "ワークフロー実行...",
     "messagePlaceholder": "メッセージを入力...",
@@ -278,7 +284,9 @@
     "noActivity": "アクティビティなし",
     "renameConversation": "会話の名前を変更",
     "deleteConversation": "会話を削除",
-    "deleteConversationTitle": "会話を削除？",
+    "deleteConversationTitle": "会話を削除しますか？",
+    "deleteConversationFailed": "会話の削除に失敗しました",
+    "renameConversationFailed": "会話の名前変更に失敗しました",
     "loadWorkflowsRetry": "ワークフローの読み込みに失敗 — 再試行中",
     "startWorkflowFailed": "ワークフローの開始に失敗しました",
     "newChat": "新しいチャット",
@@ -324,7 +332,24 @@
     "validation": {
       "problems": "問題",
       "closePanel": "問題パネルを閉じる",
-      "noIssues": "問題は見つかりませんでした"
+      "noIssues": "問題は見つかりませんでした",
+      "workflowNameRequired": "ワークフロー名は必須です",
+      "workflowDescriptionRequired": "ワークフローの説明は必須です",
+      "atLeastOneNode": "少なくとも 1 つのノードが必要です",
+      "bashEmpty": "ノード \"{{id}}\": bash スクリプトを空にできません",
+      "enterBashScript": "このノードに bash スクリプトを入力",
+      "promptEmpty": "ノード \"{{id}}\": プロンプトを空にできません",
+      "enterPrompt": "このノードにプロンプトを入力",
+      "duplicateNodeId": "ノード ID \"{{id}}\" が重複しています ({{count}} 回出現)",
+      "uniqueIdSuggestion": "各ノードは一意な ID を持つ必要があります",
+      "edgeSourceMissing": "エッジが存在しないソースノード \"{{source}}\" を参照しています",
+      "edgeTargetMissing": "エッジが存在しないターゲットノード \"{{target}}\" を参照しています",
+      "selfLoop": "ノード \"{{id}}\" に自己ループ依存があります",
+      "noSelfDep": "ノードは自分自身に依存できません",
+      "cycleDetected": "ワークフローグラフに循環が検出されました",
+      "removeCircular": "ノード間の循環依存を解消してください",
+      "outputRefMissing": "ノード \"{{node}}\" が \"${{ref}}.output\" を参照していますが、ノード \"{{ref}}\" は存在しません",
+      "checkNodeId": "ノード ID \"{{ref}}\" が正しいか確認してください"
     },
     "yaml": {
       "header": "読み取り専用 YAML プレビュー",
@@ -361,7 +386,7 @@
       "delete": "削除",
       "closeInspector": "インスペクターを閉じる",
       "fieldNodeId": "ノード ID",
-      "fieldType": "種別",
+      "fieldType": "タイプ",
       "fieldCommand": "コマンド",
       "fieldPrompt": "プロンプト",
       "fieldShellScript": "シェルスクリプト",
@@ -440,7 +465,7 @@
       "loadFailedTitle": "ワークフローの読み込みに失敗しました — サーバー接続を確認してください",
       "loadWorkflowTitle": "ワークフローを読み込む",
       "loadFailedOption": "読み込み失敗",
-      "loadOption": "読み込み...",
+      "loadOption": "読み込む...",
       "breadcrumb": "ワークフロー",
       "namePlaceholder": "workflow-name",
       "unsavedChanges": "未保存の変更",

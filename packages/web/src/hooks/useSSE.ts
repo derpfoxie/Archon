@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import type {
   SSEEvent,
   ErrorDisplay,
@@ -50,6 +51,7 @@ export function useSSE(
   conversationId: string | null,
   handlers: SSEHandlers
 ): { connected: boolean } {
+  const { t } = useTranslation();
   const [connected, setConnected] = useState(false);
   const handlersRef = useRef(handlers);
   handlersRef.current = handlers;
@@ -87,9 +89,12 @@ export function useSSE(
       if (eventSource.readyState === EventSource.CLOSED) {
         setConnected(false);
         handlersRef.current.onError({
-          message: 'Lost connection to server. Please refresh the page.',
+          message: t('chat.interface.lostConnection'),
           classification: 'transient',
-          suggestedActions: ['Refresh the page', 'Check that the server is running'],
+          suggestedActions: [
+            t('chat.interface.refreshPageAction'),
+            t('chat.interface.checkServerAction'),
+          ],
         });
       } else if (eventSource.readyState === EventSource.CONNECTING) {
         console.warn('[SSE] Connection error, reconnecting...', { conversationId });
@@ -100,9 +105,9 @@ export function useSSE(
       const data = parseSSEEvent(event.data as string);
       if (!data) {
         handlersRef.current.onError({
-          message: 'Received malformed response from server',
+          message: t('chat.interface.malformedResponse'),
           classification: 'transient',
-          suggestedActions: ['Refresh the page if chat appears stuck'],
+          suggestedActions: [t('chat.interface.refreshIfStuck')],
         });
         return;
       }
@@ -235,9 +240,9 @@ export function useSSE(
         console.error('[SSE] Handler error for event type:', data.type, handlerError);
         try {
           handlersRef.current.onError({
-            message: `Failed to process ${data.type} event. UI may be out of sync.`,
+            message: t('chat.interface.handlerFailed', { type: data.type }),
             classification: 'transient',
-            suggestedActions: ['Refresh the page if chat appears stuck'],
+            suggestedActions: [t('chat.interface.refreshIfStuck')],
           });
         } catch {
           // Avoid infinite loop if onError itself throws

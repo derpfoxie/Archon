@@ -71,7 +71,9 @@ export function ConversationItem({
         }
       })
       .catch((err: unknown) => {
-        setDeleteError(err instanceof Error ? err.message : 'Failed to delete conversation');
+        setDeleteError(
+          err instanceof Error ? err.message : t('sidebarChat.deleteConversationFailed')
+        );
         setDeleteDialogOpen(true);
       });
   }, [conversation.platform_conversation_id, queryClient, navigate, params.conversationId]);
@@ -85,7 +87,9 @@ export function ConversationItem({
           void queryClient.invalidateQueries({ queryKey: ['conversations'] });
         })
         .catch((err: unknown) => {
-          setRenameError(err instanceof Error ? err.message : 'Failed to rename conversation');
+          setRenameError(
+            err instanceof Error ? err.message : t('sidebarChat.renameConversationFailed')
+          );
           setIsEditing(true);
         });
     } else {

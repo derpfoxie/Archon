@@ -39,7 +39,10 @@ import {
 import { useProject } from '@/contexts/ProjectContext';
 import { ensureUtc } from '@/lib/format';
 
-function mapMessageRow(row: MessageResponse): ChatMessage {
+function mapMessageRow(
+  row: MessageResponse,
+  t: (key: 'chat.interface.messageDataCorrupted') => string
+): ChatMessage {
   let meta: {
     toolCalls?: {
       name: string;
@@ -62,7 +65,7 @@ function mapMessageRow(row: MessageResponse): ChatMessage {
     });
     meta = {
       error: {
-        message: 'Message data corrupted',
+        message: t('chat.interface.messageDataCorrupted'),
         classification: 'fatal' as const,
         suggestedActions: [],
       },
@@ -154,7 +157,7 @@ export function ChatInterface({ conversationId }: ChatInterfaceProps): React.Rea
     void getMessages(conversationId)
       .then((rows: MessageResponse[]) => {
         if (cancelled || rows.length === 0) return;
-        const hydrated: ChatMessage[] = rows.map(mapMessageRow);
+        const hydrated: ChatMessage[] = rows.map(r => mapMessageRow(r, t));
         // REST is the source of truth for all completed messages.
         // Keep actively streaming messages that have content (AI is generating).
         // Discard empty thinking placeholders ONLY if we're not currently sending —
@@ -447,7 +450,7 @@ export function ChatInterface({ conversationId }: ChatInterfaceProps): React.Rea
         void getMessages(cid)
           .then((rows: MessageResponse[]) => {
             if (rows.length === 0) return;
-            const hydrated = rows.map(mapMessageRow);
+            const hydrated = rows.map(r => mapMessageRow(r, t));
             // Preserve client-only system messages (e.g., sync status) when rehydrating
             setMessages(prev => {
               const systemMessages = prev.filter(m => m.role === 'system');
