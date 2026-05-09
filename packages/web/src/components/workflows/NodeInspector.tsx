@@ -33,7 +33,8 @@ const inputClass =
 const selectClass =
   'w-full rounded-md border border-border bg-surface px-2 py-1.5 text-xs text-text-primary focus:outline-none focus:ring-1 focus:ring-accent';
 
-const labelClass = 'text-[10px] text-text-tertiary uppercase tracking-wide';
+const labelClass =
+  'text-[10px] text-text-tertiary uppercase tracking-wide break-words leading-tight';
 
 const textareaClass =
   'w-full rounded-md border border-border bg-surface px-2 py-1.5 text-xs text-text-primary font-mono placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-accent resize-y';
@@ -740,20 +741,20 @@ function DagInspector({
 
       {/* Tabbed content */}
       <Tabs defaultValue="general" className="flex-1 flex flex-col gap-0">
-        <TabsList variant="line" className="px-2 pt-1 w-full justify-start">
-          <TabsTrigger value="general" className="text-xs">
+        <TabsList variant="line" className="flex-wrap px-2 pt-1 w-full justify-start">
+          <TabsTrigger value="general" className="whitespace-nowrap text-xs">
             {t('workflowsBuilder.inspector.tabGeneral')}
           </TabsTrigger>
-          <TabsTrigger value="execution" className="text-xs">
+          <TabsTrigger value="execution" className="whitespace-nowrap text-xs">
             {t('workflowsBuilder.inspector.tabExecution')}
           </TabsTrigger>
           {!isBash && (
-            <TabsTrigger value="tools" className="text-xs">
+            <TabsTrigger value="tools" className="whitespace-nowrap text-xs">
               {t('workflowsBuilder.inspector.tabTools')}
             </TabsTrigger>
           )}
           {!isBash && (
-            <TabsTrigger value="advanced" className="text-xs">
+            <TabsTrigger value="advanced" className="whitespace-nowrap text-xs">
               {t('workflowsBuilder.inspector.tabAdvanced')}
             </TabsTrigger>
           )}

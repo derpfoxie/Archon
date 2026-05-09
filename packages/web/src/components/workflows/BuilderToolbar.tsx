@@ -79,7 +79,7 @@ export function BuilderToolbar({
             onChange={(e): void => {
               if (e.target.value) onLoadWorkflow(e.target.value);
             }}
-            className="rounded-md border border-border bg-surface px-1.5 py-1 text-xs text-text-secondary focus:outline-none focus:ring-1 focus:ring-accent w-[72px] shrink-0"
+            className="rounded-md border border-border bg-surface px-1.5 py-1 text-xs text-text-secondary focus:outline-none focus:ring-1 focus:ring-accent min-w-[72px] max-w-[140px] shrink-0"
             title={
               workflowsError
                 ? t('workflowsBuilder.toolbar.loadFailedTitle')

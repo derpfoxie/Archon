@@ -51,7 +51,7 @@ export function StatusSummaryBar({
             onFilterChange(null);
           }}
           className={cn(
-            'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+            'whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium transition-colors',
             activeFilter === null
               ? 'bg-primary/10 text-primary border border-primary'
               : 'bg-surface-elevated text-text-secondary border border-border hover:border-text-tertiary'
@@ -69,7 +69,7 @@ export function StatusSummaryBar({
                 onFilterChange(isActive ? null : status);
               }}
               className={cn(
-                'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                'whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium transition-colors',
                 isActive
                   ? 'bg-primary/10 text-primary border border-primary'
                   : 'bg-surface-elevated text-text-secondary border border-border hover:border-text-tertiary',
@@ -89,7 +89,7 @@ export function StatusSummaryBar({
           onChange={(e): void => {
             onProjectFilterChange(e.target.value || null);
           }}
-          className="rounded-md border border-border bg-surface-elevated px-2 py-1.5 text-xs text-text-primary focus:border-primary focus:outline-none"
+          className="max-w-[12rem] rounded-md border border-border bg-surface-elevated px-2 py-1.5 text-xs text-text-primary focus:border-primary focus:outline-none"
         >
           <option value="">{t('dashboard.allProjects')}</option>
           {codebases?.map(cb => (
@@ -104,7 +104,7 @@ export function StatusSummaryBar({
           onChange={(e): void => {
             onDateRangeChange(e.target.value as DateRange);
           }}
-          className="rounded-md border border-border bg-surface-elevated px-2 py-1.5 text-xs text-text-primary focus:border-primary focus:outline-none"
+          className="max-w-[12rem] rounded-md border border-border bg-surface-elevated px-2 py-1.5 text-xs text-text-primary focus:border-primary focus:outline-none"
         >
           {DATE_RANGE_KEYS.map(opt => (
             <option key={opt.value} value={opt.value}>
@@ -127,7 +127,7 @@ export function StatusSummaryBar({
         </div>
 
         {health && (
-          <span className="text-xs text-text-tertiary shrink-0">
+          <span className="whitespace-nowrap text-xs text-text-tertiary shrink-0">
             {t('dashboard.capacity', {
               active: health.concurrency.active,
               max: health.concurrency.maxConcurrent,
