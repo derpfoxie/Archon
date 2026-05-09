@@ -1,0 +1,107 @@
+# AUTO-GENERATED MIRROR — DO NOT EDIT BY HAND.
+# Source: archon-issue-review-full.yaml
+# Translation table: scripts/zh-workflow-translations.yaml
+# Regenerate: bun run generate:zh-workflows
+name: archon-issue-review-full-zh
+description: |
+  使用场景：希望对一个 GitHub issue 跑完整的"修复 + 全面 review"管线。
+  触发词："full review"、"comprehensive fix"、"fix with full review"、"deep review"、
+            "issue review full"。
+  不适用于：简单的 issue 修复（请用 archon-fix-github-issue）、关于 issue 的询问、
+            CI 失败、PR review、一般探索。
+
+  完整流程：
+  1. 调研 issue → 根因分析、实现计划
+  2. 实现修复 → 代码改动、测试、创建 PR
+  3. 综合 review → 5 个并行 agent，知晓范围
+  4. 修复 review 发现 → 处理 CRITICAL / HIGH 项
+  5. 最终摘要 → 决策矩阵、后续建议
+nodes:
+  - id: investigate
+    command: archon-investigate-issue
+    systemPrompt: Respond in Simplified Chinese (简体中文).
+  - id: implement
+    command: archon-implement-issue
+    depends_on:
+      - investigate
+    context: fresh
+    systemPrompt: Respond in Simplified Chinese (简体中文).
+  - id: verify-pr-base
+    bash: |
+      set -euo pipefail
+      EXPECTED="$BASE_BRANCH"
+      ACTUAL=$(gh pr view --json baseRefName -q '.baseRefName')
+      if [ "$ACTUAL" != "$EXPECTED" ]; then
+        PR_NUMBER=$(gh pr view --json number -q '.number')
+        echo "Base mismatch on PR #$PR_NUMBER: expected=$EXPECTED actual=$ACTUAL — re-targeting" >&2
+        gh pr edit "$PR_NUMBER" --base "$EXPECTED"
+      else
+        echo "PR base verified: $EXPECTED"
+      fi
+    depends_on:
+      - implement
+  - id: review-scope
+    command: archon-pr-review-scope
+    depends_on:
+      - verify-pr-base
+    context: fresh
+    systemPrompt: Respond in Simplified Chinese (简体中文).
+  - id: sync
+    command: archon-sync-pr-with-main
+    depends_on:
+      - review-scope
+    context: fresh
+    systemPrompt: Respond in Simplified Chinese (简体中文).
+  - id: code-review
+    command: archon-code-review-agent
+    depends_on:
+      - sync
+    context: fresh
+    systemPrompt: Respond in Simplified Chinese (简体中文).
+  - id: error-handling
+    command: archon-error-handling-agent
+    depends_on:
+      - sync
+    context: fresh
+    systemPrompt: Respond in Simplified Chinese (简体中文).
+  - id: test-coverage
+    command: archon-test-coverage-agent
+    depends_on:
+      - sync
+    context: fresh
+    systemPrompt: Respond in Simplified Chinese (简体中文).
+  - id: comment-quality
+    command: archon-comment-quality-agent
+    depends_on:
+      - sync
+    context: fresh
+    systemPrompt: Respond in Simplified Chinese (简体中文).
+  - id: docs-impact
+    command: archon-docs-impact-agent
+    depends_on:
+      - sync
+    context: fresh
+    systemPrompt: Respond in Simplified Chinese (简体中文).
+  - id: synthesize
+    command: archon-synthesize-review
+    depends_on:
+      - code-review
+      - error-handling
+      - test-coverage
+      - comment-quality
+      - docs-impact
+    trigger_rule: one_success
+    context: fresh
+    systemPrompt: Respond in Simplified Chinese (简体中文).
+  - id: implement-fixes
+    command: archon-implement-review-fixes
+    depends_on:
+      - synthesize
+    context: fresh
+    systemPrompt: Respond in Simplified Chinese (简体中文).
+  - id: summary
+    command: archon-workflow-summary
+    depends_on:
+      - implement-fixes
+    context: fresh
+    systemPrompt: Respond in Simplified Chinese (简体中文).

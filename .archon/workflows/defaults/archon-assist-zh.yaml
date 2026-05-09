@@ -1,0 +1,16 @@
+# AUTO-GENERATED MIRROR — DO NOT EDIT BY HAND.
+# Source: archon-assist.yaml
+# Translation table: scripts/zh-workflow-translations.yaml
+# Regenerate: bun run generate:zh-workflows
+name: archon-assist-zh
+description: |
+  使用场景：没有其他工作流匹配请求时使用。
+  处理：问题、调试、探索、一次性任务、解释说明、CI 失败、通用帮助。
+  能力：完整的 Claude Code agent，所有工具可用。
+  备注：使用 assist 模式时会通知用户，便于追踪。
+worktree:
+  enabled: false
+nodes:
+  - id: assist
+    command: archon-assist
+    systemPrompt: Respond in Simplified Chinese (简体中文).

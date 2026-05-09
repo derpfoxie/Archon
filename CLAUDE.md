@@ -728,6 +728,13 @@ async function createSession(conversationId: string, codebaseId: string) {
 - Opt-out: Set `defaults.loadDefaultCommands: false` or `defaults.loadDefaultWorkflows: false` in `.archon/config.yaml`
 - **After adding, removing, or editing a default file, run `bun run generate:bundled`** to refresh the embedded bundle. `bun run validate` (and CI) run `check:bundled` and `check:bundled-skill` and will fail loudly if either generated file is stale.
 
+**中文镜像工作流（fork 维护）：**
+- `.archon/workflows/defaults/<name>-zh.yaml` 由 `bun run generate:zh-workflows` 从英文版自动生成；翻译表在 `scripts/zh-workflow-translations.yaml`
+- 镜像复用同一份英文 command md（不复制 `.archon/commands/defaults/`），通过节点级 `systemPrompt: "Respond in Simplified Chinese (简体中文)."` 让 AI 输出中文，保留英文 prompt 的训练优势
+- 翻译表覆盖 `description` / approval `message` / approval `on_reject_prompt` / loop `gate_message`；翻译缺失时生成器报错列出缺失项
+- **不要手改 `*-zh.yaml`** —— 文件头部即标 `AUTO-GENERATED MIRROR — DO NOT EDIT BY HAND`；改翻译表后跑 `bun run generate:zh-workflows` 重生
+- `bun run generate:bundled` 与 `bun run check:bundled` 已串联调用 `generate:zh-workflows` / `check:zh-workflows`，每次 bundled 重生都会先重生镜像，CI 兜底
+
 **Home-scoped ("global") workflows, commands, and scripts** (user-level, applies to every project):
 - Workflows: `~/.archon/workflows/` (or `$ARCHON_HOME/workflows/`)
 - Commands: `~/.archon/commands/` (or `$ARCHON_HOME/commands/`)
