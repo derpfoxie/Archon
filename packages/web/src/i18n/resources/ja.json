@@ -293,7 +293,20 @@
     "projects": "プロジェクト",
     "loadProjectsRetry": "プロジェクトの読み込みに失敗 — 再試行中",
     "projectFallback": "プロジェクト",
-    "loadRetry": "読み込み失敗 — 再試行中"
+    "loadRetry": "読み込み失敗 — 再試行中",
+    "conversationsHeader": "会話",
+    "workflowRunsHeader": "ワークフロー実行",
+    "activeWorktreesHeader": "アクティブな Worktree",
+    "activeWorktreesHeaderWithCount": "アクティブな Worktree（{{count}}）",
+    "noConversations": "会話はありません",
+    "noWorkflowRuns": "ワークフロー実行はありません",
+    "noProjectsYet": "プロジェクトはまだありません",
+    "addRepositoryHint": "+ をクリックしてリポジトリを追加",
+    "noMatchingProjects": "一致するプロジェクトはありません",
+    "allConversationsHeader": "すべての会話",
+    "timeToday": "今日",
+    "timeDaysAgo": "{{count}} 日前",
+    "removeProjectDescription": "{{name}} を Archon から削除し、ワークスペースディレクトリと worktree を削除します。この操作は取り消せません。"
   },
   "header": {
     "openInVsCode": "VS Code で開く",

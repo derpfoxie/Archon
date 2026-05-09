@@ -290,7 +290,20 @@
     "projects": "项目",
     "loadProjectsRetry": "加载项目失败——重试中",
     "projectFallback": "项目",
-    "loadRetry": "加载失败——重试中"
+    "loadRetry": "加载失败——重试中",
+    "conversationsHeader": "对话",
+    "workflowRunsHeader": "工作流运行",
+    "activeWorktreesHeader": "活跃 Worktree",
+    "activeWorktreesHeaderWithCount": "活跃 Worktree（{{count}}）",
+    "noConversations": "暂无对话",
+    "noWorkflowRuns": "暂无工作流运行",
+    "noProjectsYet": "还没有项目",
+    "addRepositoryHint": "点击 + 添加仓库",
+    "noMatchingProjects": "没有匹配的项目",
+    "allConversationsHeader": "所有对话",
+    "timeToday": "今天",
+    "timeDaysAgo": "{{count}} 天前",
+    "removeProjectDescription": "将从 Archon 中移除 {{name}}，并删除其工作目录与 worktree。该操作不可撤销。"
   },
   "header": {
     "openInVsCode": "在 VS Code 中打开",

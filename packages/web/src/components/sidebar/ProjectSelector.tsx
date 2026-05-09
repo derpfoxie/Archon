@@ -56,7 +56,7 @@ export function ProjectSelector({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-4">
-        <span className="text-xs text-text-tertiary">Loading...</span>
+        <span className="text-xs text-text-tertiary">{t('common.loading')}</span>
       </div>
     );
   }
@@ -65,8 +65,8 @@ export function ProjectSelector({
     return (
       <div className="flex flex-col items-center justify-center gap-2 py-6">
         <FolderGit2 className="h-8 w-8 text-text-tertiary" />
-        <span className="text-xs text-text-tertiary">No projects yet</span>
-        <span className="text-[10px] text-text-tertiary">Click + to add a repository</span>
+        <span className="text-xs text-text-tertiary">{t('sidebarChat.noProjectsYet')}</span>
+        <span className="text-[10px] text-text-tertiary">{t('sidebarChat.addRepositoryHint')}</span>
       </div>
     );
   }
@@ -80,7 +80,7 @@ export function ProjectSelector({
   if (filteredProjects.length === 0) {
     return (
       <div className="flex items-center justify-center py-4">
-        <span className="text-xs text-text-tertiary">No matching projects</span>
+        <span className="text-xs text-text-tertiary">{t('sidebarChat.noMatchingProjects')}</span>
       </div>
     );
   }
@@ -101,7 +101,7 @@ export function ProjectSelector({
           )}
         >
           <FolderGit2 className="h-4 w-4 shrink-0" />
-          <span className="text-sm">All Projects</span>
+          <span className="text-sm">{t('chat.allProjects')}</span>
         </button>
         {filteredProjects.map(project => (
           <div key={project.id} className="group relative">
@@ -154,8 +154,9 @@ export function ProjectSelector({
           <AlertDialogHeader>
             <AlertDialogTitle>{t('sidebarChat.removeProjectTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will remove <strong>{deleteTarget?.name}</strong> from Archon, delete its
-              workspace directory and worktrees. This cannot be undone.
+              {t('sidebarChat.removeProjectDescription', {
+                name: deleteTarget?.name ?? '',
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           {deleteError && <p className="text-sm text-error px-1">{deleteError}</p>}

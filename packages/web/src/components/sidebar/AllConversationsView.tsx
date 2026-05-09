@@ -69,16 +69,16 @@ export function AllConversationsView({
         onClick={handleNewChat}
         className="mx-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-accent-hover transition-colors"
       >
-        New Chat
+        {t('sidebarChat.newChat')}
       </button>
 
       <div>
         <span className="px-1 text-[11px] font-semibold uppercase tracking-wider text-text-tertiary">
-          All Conversations
+          {t('sidebarChat.allConversationsHeader')}
         </span>
         <div className="mt-1 flex flex-col gap-0.5">
           {isErrorConversations ? (
-            <span className="px-1 text-xs text-error">Failed to load — retrying</span>
+            <span className="px-1 text-xs text-error">{t('sidebarChat.loadRetry')}</span>
           ) : filtered && filtered.length > 0 ? (
             filtered.map(conv => (
               <ConversationItem

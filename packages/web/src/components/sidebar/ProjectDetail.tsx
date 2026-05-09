@@ -119,7 +119,7 @@ export function ProjectDetail({
         onClick={handleNewChat}
         className="mx-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-accent-hover transition-colors"
       >
-        New Chat
+        {t('sidebarChat.newChat')}
       </button>
 
       <WorkflowInvoker codebaseId={codebaseId} />
@@ -127,7 +127,7 @@ export function ProjectDetail({
       {/* Conversations section */}
       <div>
         <span className="px-1 text-[11px] font-semibold uppercase tracking-wider text-text-tertiary">
-          Conversations
+          {t('sidebarChat.conversationsHeader')}
         </span>
         <div className="mt-1 flex flex-col gap-0.5">
           {isErrorConversations ? (
@@ -141,7 +141,9 @@ export function ProjectDetail({
               />
             ))
           ) : (
-            <span className="px-1 text-xs text-text-tertiary">No conversations</span>
+            <span className="px-1 text-xs text-text-tertiary">
+              {t('sidebarChat.noConversations')}
+            </span>
           )}
         </div>
       </div>
@@ -149,7 +151,7 @@ export function ProjectDetail({
       {/* Workflow runs section */}
       <div>
         <span className="px-1 text-[11px] font-semibold uppercase tracking-wider text-text-tertiary">
-          Workflow Runs
+          {t('sidebarChat.workflowRunsHeader')}
         </span>
         <div className="mt-1 flex flex-col gap-0.5">
           {isErrorRuns ? (
@@ -171,7 +173,9 @@ export function ProjectDetail({
               </button>
             ))
           ) : (
-            <span className="px-1 text-xs text-text-tertiary">No workflow runs</span>
+            <span className="px-1 text-xs text-text-tertiary">
+              {t('sidebarChat.noWorkflowRuns')}
+            </span>
           )}
         </div>
       </div>
@@ -180,7 +184,11 @@ export function ProjectDetail({
       {(isErrorEnvironments || activeEnvironments.length > 0) && (
         <div>
           <span className="px-1 text-[11px] font-semibold uppercase tracking-wider text-text-tertiary">
-            Active Worktrees{!isErrorEnvironments && ` (${String(activeEnvironments.length)})`}
+            {isErrorEnvironments
+              ? t('sidebarChat.activeWorktreesHeader')
+              : t('sidebarChat.activeWorktreesHeaderWithCount', {
+                  count: activeEnvironments.length,
+                })}
           </span>
           <div className="mt-1 flex flex-col gap-0.5">
             {isErrorEnvironments ? (
@@ -196,8 +204,8 @@ export function ProjectDetail({
                   </span>
                   <span className="shrink-0 text-[10px] text-text-tertiary">
                     {env.days_since_activity === 0
-                      ? 'today'
-                      : `${String(env.days_since_activity)}d ago`}
+                      ? t('sidebarChat.timeToday')
+                      : t('sidebarChat.timeDaysAgo', { count: env.days_since_activity })}
                   </span>
                 </div>
               ))

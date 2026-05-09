@@ -291,7 +291,20 @@
     "projects": "Projects",
     "loadProjectsRetry": "Failed to load projects — retrying",
     "projectFallback": "Project",
-    "loadRetry": "Failed to load — retrying"
+    "loadRetry": "Failed to load — retrying",
+    "conversationsHeader": "Conversations",
+    "workflowRunsHeader": "Workflow Runs",
+    "activeWorktreesHeader": "Active Worktrees",
+    "activeWorktreesHeaderWithCount": "Active Worktrees ({{count}})",
+    "noConversations": "No conversations",
+    "noWorkflowRuns": "No workflow runs",
+    "noProjectsYet": "No projects yet",
+    "addRepositoryHint": "Click + to add a repository",
+    "noMatchingProjects": "No matching projects",
+    "allConversationsHeader": "All Conversations",
+    "timeToday": "today",
+    "timeDaysAgo": "{{count}}d ago",
+    "removeProjectDescription": "This will remove {{name}} from Archon and delete its workspace directory and worktrees. This cannot be undone."
   },
   "header": {
     "openInVsCode": "Open in VS Code",
