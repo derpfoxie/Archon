@@ -119,4 +119,5 @@ packages/server/.env
 .playwright-cli/
 skills-lock.json
 test-results/
+playwright-report/
 .archon/ralph/

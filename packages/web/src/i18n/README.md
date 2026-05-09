@@ -96,4 +96,32 @@ caller can pass localised `ms` / `s` / `m` strings via `t('common.time.X')`.
 2. Add the locale code to `supportedLngs` in `index.ts`.
 3. Add it to the `LANGUAGES` array in `components/layout/LanguageSwitcher.tsx`.
 4. Add it to `TARGET_LOCALES` in `scripts/check-i18n-keys.ts`.
-5. Run `bun run validate`.
+5. Add it to `LOCALES` in `tests/visual/fixtures.ts` so visual tests cover it too.
+6. Run `bun run validate`.
+
+## Visual regression (three-locale snapshots)
+
+`tests/visual/` holds Playwright screenshot tests that re-render each high-risk
+component once per locale (`en`, `zh-CN`, `ja`). They guard against changes in
+this folder — or in CSS that lays out translated strings — silently breaking
+`zh-CN` or `ja` layouts.
+
+```bash
+# One-time browser install (downloads ~100 MB Chromium)
+bunx playwright install --with-deps chromium
+
+# Run baseline locally
+bun --filter @archon/web run test:visual
+
+# After intentionally changing copy or layout, refresh baselines
+bun --filter @archon/web run test:visual:update
+```
+
+Commit the updated `tests/visual/__screenshots__/*.png` baselines together with
+the resource or component change. CI re-runs `test:visual` on every PR that
+touches `packages/web/**`. The covered targets are `dashboard`, `top-nav`,
+`chat-empty`, and `node-inspector` — each rendered three times.
+
+If you change a translation that affects layout (e.g. a long Japanese label),
+expect the visual test to fail; review the diff in the Playwright HTML report,
+then update the baseline if the new layout is acceptable.
