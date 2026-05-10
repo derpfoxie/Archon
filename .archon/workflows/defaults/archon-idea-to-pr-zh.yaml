@@ -42,6 +42,7 @@ nodes:
     depends_on:
       - confirm-plan
     context: fresh
+    provider: claude
     model: opus[1m]
     systemPrompt: Respond in Simplified Chinese (简体中文).
   - id: validate
