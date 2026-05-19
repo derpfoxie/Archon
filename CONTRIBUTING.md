@@ -62,6 +62,68 @@ bun run validate
 
 详见 [CLAUDE.md](./CLAUDE.md)。
 
+## 向 Marketplace 贡献工作流
+
+把你的 Archon 工作流分享给社区——只需在 marketplace 注册表 [`packages/docs-web/src/data/marketplace.ts`](packages/docs-web/src/data/marketplace.ts) 里加一项即可。
+
+### 提交方式
+
+1. 把工作流放到一个**公开的 GitHub 仓库**——既可以是单个 YAML 文件，也可以是一个目录
+2. 钉到一个具体的 commit SHA（保证 merge 后不可变）
+3. Fork Archon，在 `packages/docs-web/src/data/marketplace.ts` 加一项
+4. 提 PR——自动 lint 会在评审前校验你这一项
+
+### 提交格式
+
+**单文件工作流**——一个独立的 `.yaml` 文件：
+
+```
+sourceUrl: "https://github.com/you/repo/blob/main/my-workflow.yaml"
+```
+
+**目录工作流**——包含工作流 YAML 以及配套的 commands / scripts / skills：
+
+```
+sourceUrl: "https://github.com/you/repo/tree/main/my-workflow/"
+```
+
+约定目录结构：
+
+```
+my-workflow/
+├── my-workflow.yaml   # 主工作流（文件名必须等于 slug，或者目录里只有这一个 .yaml）
+├── commands/          # → 安装到 .archon/commands/
+│   └── helper.md
+├── scripts/           # → 安装到 .archon/scripts/
+│   └── analyze.ts
+└── skills/            # → 安装到 .archon/skills/
+    └── my-skill/
+```
+
+如果你的工作流引用了用户本地需要的自定义 commands / scripts / 其他资源，请用目录形式。
+
+### 条目要求
+
+| 字段 | 要求 |
+|------|------|
+| `slug` | 全小写，仅允许连字符（如 `my-review-workflow`）——必须唯一 |
+| `name` | 人类可读的展示名 |
+| `author` | 你的 GitHub 用户名 |
+| `description` | 1–3 句话：做什么、什么时候用 |
+| `sourceUrl` | GitHub blob URL（单文件）或 tree URL（目录） |
+| `sha` | 完整 40 字符 commit SHA，把版本钉死 |
+| `tags` | 至少包含一个：`development`、`review`、`automation`、`planning` |
+| `archonVersionCompat` | Semver 区间（如 `>=0.3.0`） |
+
+### 自我声明
+
+提交即代表你承诺：
+
+- [ ] 该工作流不会窃取数据、凭据或机密
+- [ ] 该工作流不会在未经用户确认的情况下执行破坏性操作
+- [ ] 你有权公开分享该工作流
+- [ ] 所钉的 SHA 指向一个已审查、稳定的版本
+
 ## 有问题？
 
 请提一个 [issue](https://github.com/coleam00/Archon/issues) 或发起 [discussion](https://github.com/coleam00/Archon/discussions)。

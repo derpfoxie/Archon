@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { ReactFlowProvider, useNodesState, useEdgesState, useViewport } from '@xyflow/react';
 import type { Edge } from '@xyflow/react';
-import type { WorkflowDefinition } from '@/lib/api';
+import type { WorkflowDefinition, WorkflowSource } from '@/lib/api';
 
 import { useProject } from '@/contexts/ProjectContext';
 import {
@@ -132,6 +132,7 @@ function WorkflowBuilderInner(): React.ReactElement {
   const [workflowDescription, setWorkflowDescription] = useState('');
   const [provider, setProvider] = useState<string | undefined>(undefined);
   const [model, setModel] = useState<string | undefined>(undefined);
+  const [workflowSource, setWorkflowSource] = useState<WorkflowSource | undefined>(undefined);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
@@ -204,11 +205,12 @@ function WorkflowBuilderInner(): React.ReactElement {
   const loadWorkflow = useCallback(
     async (name: string): Promise<void> => {
       try {
-        const { workflow } = await getWorkflow(name, cwd);
+        const { workflow, source } = await getWorkflow(name, cwd);
         setWorkflowName(workflow.name);
         setWorkflowDescription(workflow.description);
         setProvider(workflow.provider);
         setModel(workflow.model);
+        setWorkflowSource(source);
         setValidationErrors([]);
 
         const { nodes: rfNodes, edges: rfEdges } = dagNodesToReactFlow(workflow.nodes);
@@ -301,7 +303,7 @@ function WorkflowBuilderInner(): React.ReactElement {
         return;
       }
       setValidationErrors([]);
-      await saveWorkflow(workflowName.trim(), def, cwd);
+      await saveWorkflow(workflowName.trim(), def, cwd, workflowSource);
       setHasUnsavedChanges(false);
     } catch (err) {
       const error = err instanceof Error ? err : new Error(t('common.errors.unknown'));
@@ -309,7 +311,7 @@ function WorkflowBuilderInner(): React.ReactElement {
       setValidationErrors([t('workflowsBuilder.panel.saveFailed', { error: error.message })]);
       setValidationPanelOpen(true);
     }
-  }, [buildDefinition, workflowName, cwd, t]);
+  }, [buildDefinition, workflowName, cwd, workflowSource, t]);
 
   const handleRun = useCallback(async (): Promise<void> => {
     if (!workflowName.trim() || hasUnsavedChanges) return;

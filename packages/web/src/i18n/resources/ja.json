@@ -65,6 +65,7 @@
       "reviewSynthesis": "レビュー集約",
       "validation": "検証",
       "project": "プロジェクト",
+      "global": "グローバル",
       "utilities": "ユーティリティ"
     }
   },
@@ -92,6 +93,7 @@
     "errorRetry": "再試行",
     "copyMessage": "メッセージをコピー",
     "copied": "コピーしました",
+    "copyFailed": "コピーに失敗しました",
     "jsonOutput": "JSON 出力",
     "toolInput": "入力",
     "toolOutput": "出力",
@@ -320,7 +322,10 @@
     "loading": "ワークフローを読み込み中...",
     "loadFailed": "ワークフローの読み込みに失敗しました。サーバー接続を確認してください。",
     "searchPlaceholder": "ワークフローを検索...",
-    "noWorkflowsHint": "ワークフローが見つかりません。次の場所に定義を追加してください: ",
+    "noWorkflowsInProjectPrefix": "このプロジェクトにワークフローが見つかりません。プロジェクトルートの次の場所に定義を追加してください: ",
+    "noWorkflowsInProjectSuffix": " 。",
+    "noWorkflowsBundledPrefix": "利用可能なワークフローがありません。バンドルされたデフォルトはここに自動的に表示されるはずです。表示されない場合は、設定で ",
+    "noWorkflowsBundledSuffix": " が有効になっているか確認してください。",
     "noMatch": "検索条件に一致するワークフローはありません。",
     "selectWorkflow": "ワークフローを選択: {{name}}",
     "editInBuilder": "ビルダーで編集",

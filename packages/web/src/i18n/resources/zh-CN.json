@@ -62,6 +62,7 @@
       "reviewSynthesis": "评审汇总",
       "validation": "验证",
       "project": "项目",
+      "global": "全局",
       "utilities": "工具"
     }
   },
@@ -89,6 +90,7 @@
     "errorRetry": "重试",
     "copyMessage": "复制消息",
     "copied": "已复制",
+    "copyFailed": "复制失败",
     "jsonOutput": "JSON 输出",
     "toolInput": "输入",
     "toolOutput": "输出",
@@ -317,7 +319,10 @@
     "loading": "加载工作流中...",
     "loadFailed": "加载工作流失败。请检查服务连接。",
     "searchPlaceholder": "搜索工作流...",
-    "noWorkflowsHint": "未找到工作流。请将工作流定义添加到 ",
+    "noWorkflowsInProjectPrefix": "该项目下未找到工作流。请将工作流定义添加到项目根目录的 ",
+    "noWorkflowsInProjectSuffix": "。",
+    "noWorkflowsBundledPrefix": "当前没有可用的工作流。内置默认工作流通常会自动出现；如未出现，请检查配置中 ",
+    "noWorkflowsBundledSuffix": " 是否已启用。",
     "noMatch": "没有匹配的工作流。",
     "selectWorkflow": "选择工作流：{{name}}",
     "editInBuilder": "在编辑器中编辑",

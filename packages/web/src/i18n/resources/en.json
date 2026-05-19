@@ -62,6 +62,7 @@
       "reviewSynthesis": "Review Synthesis",
       "validation": "Validation",
       "project": "Project",
+      "global": "Global",
       "utilities": "Utilities"
     }
   },
@@ -90,6 +91,7 @@
     "errorRetry": "Retry",
     "copyMessage": "Copy message",
     "copied": "Copied",
+    "copyFailed": "Failed to copy",
     "jsonOutput": "JSON output",
     "toolInput": "Input",
     "toolOutput": "Output",
@@ -318,7 +320,10 @@
     "loading": "Loading workflows...",
     "loadFailed": "Failed to load workflows. Check server connectivity.",
     "searchPlaceholder": "Search workflows...",
-    "noWorkflowsHint": "No workflows found. Add workflow definitions to ",
+    "noWorkflowsInProjectPrefix": "No workflows found in this project. Add workflow definitions to ",
+    "noWorkflowsInProjectSuffix": " in the project root.",
+    "noWorkflowsBundledPrefix": "No workflows are available. Bundled defaults should appear here automatically; if they do not, check that ",
+    "noWorkflowsBundledSuffix": " is enabled in your config.",
     "noMatch": "No workflows match your search.",
     "selectWorkflow": "Select workflow: {{name}}",
     "editInBuilder": "Edit in builder",

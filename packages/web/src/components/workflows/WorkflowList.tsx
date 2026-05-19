@@ -174,8 +174,23 @@ export function WorkflowList(): React.ReactElement {
         {/* Workflow grid */}
         {!hasWorkflows ? (
           <div className="text-sm text-text-secondary">
-            {t('workflowsPage.noWorkflowsHint')}
-            <code className="text-xs bg-surface-inset px-1 py-0.5 rounded">.archon/workflows/</code>
+            {localProjectId ? (
+              <>
+                {t('workflowsPage.noWorkflowsInProjectPrefix')}
+                <code className="text-xs bg-surface-inset px-1 py-0.5 rounded">
+                  .archon/workflows/
+                </code>
+                {t('workflowsPage.noWorkflowsInProjectSuffix')}
+              </>
+            ) : (
+              <>
+                {t('workflowsPage.noWorkflowsBundledPrefix')}
+                <code className="text-xs bg-surface-inset px-1 py-0.5 rounded">
+                  defaults.loadDefaultWorkflows
+                </code>
+                {t('workflowsPage.noWorkflowsBundledSuffix')}
+              </>
+            )}
           </div>
         ) : filteredWorkflows.length === 0 ? (
           <div className="text-sm text-text-secondary py-8 text-center">

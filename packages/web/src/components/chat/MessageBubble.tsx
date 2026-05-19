@@ -1,6 +1,6 @@
 import { memo, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Copy, Check, Paperclip } from 'lucide-react';
+import { Copy, Check, Paperclip, X } from 'lucide-react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
@@ -142,6 +142,7 @@ function MessageBubbleRaw({ message }: MessageBubbleProps): React.ReactElement {
   const isUser = message.role === 'user';
   const isThinking = message.isStreaming && !message.content;
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState(false);
   const [artifactViewer, setArtifactViewer] = useState<{ runId: string; filename: string } | null>(
     null
   );
@@ -155,12 +156,22 @@ function MessageBubbleRaw({ message }: MessageBubbleProps): React.ReactElement {
   );
 
   const copyMessage = (): void => {
-    void navigator.clipboard.writeText(message.content).then(() => {
-      setCopied(true);
-      setTimeout(() => {
-        setCopied(false);
-      }, 1500);
-    });
+    void navigator.clipboard
+      .writeText(message.content)
+      .then(() => {
+        setCopied(true);
+        setCopyError(false);
+        setTimeout(() => {
+          setCopied(false);
+        }, 1500);
+      })
+      .catch(error => {
+        console.debug('Clipboard write failed:', error);
+        setCopyError(true);
+        setTimeout(() => {
+          setCopyError(false);
+        }, 2000);
+      });
   };
 
   return (
@@ -183,11 +194,19 @@ function MessageBubbleRaw({ message }: MessageBubbleProps): React.ReactElement {
                 <button
                   onClick={copyMessage}
                   className="shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity text-text-tertiary hover:text-text-primary"
-                  title={t('chat.copyMessage')}
-                  aria-label={copied ? t('chat.copied') : t('chat.copyMessage')}
+                  title={copyError ? t('chat.copyFailed') : t('chat.copyMessage')}
+                  aria-label={
+                    copied
+                      ? t('chat.copied')
+                      : copyError
+                        ? t('chat.copyFailed')
+                        : t('chat.copyMessage')
+                  }
                 >
                   {copied ? (
                     <Check className="h-3.5 w-3.5 text-success" />
+                  ) : copyError ? (
+                    <X className="h-3.5 w-3.5 text-error" />
                   ) : (
                     <Copy className="h-3.5 w-3.5" />
                   )}
