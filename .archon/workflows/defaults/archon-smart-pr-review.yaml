@@ -1,14 +1,14 @@
 name: archon-smart-pr-review
 description: |
-  Use when: User wants a smart, efficient PR review that adapts to PR complexity.
+  Use when: 希望进行智能、高效的 PR review，能适应 PR 复杂度。
   Triggers: "smart review", "review this PR", "review PR #123", "efficient review",
             "smart PR review", "quick review".
-  Does: Gathers PR scope -> classifies complexity -> routes to only relevant review agents ->
-        synthesizes findings -> auto-fixes CRITICAL/HIGH issues.
-  NOT for: When you explicitly want ALL review agents (use archon-comprehensive-pr-review instead).
+  Does: 收集 PR 范围 → 分类复杂度 → 只路由到相关 review agent →
+        综合发现 → 自动修复 CRITICAL/HIGH 问题。
+  NOT for: 当你明确想要所有 review agent 时（请用 archon-comprehensive-pr-review）。
 
-  Unlike the comprehensive review, this workflow classifies the PR first and only runs
-  the review agents that are relevant. A 3-line typo fix skips test-coverage and docs-impact.
+  与全面 review 不同，此工作流先分类 PR，只运行相关的 review agent。
+  3 行的错字修复会跳过 test-coverage 和 docs-impact。
 
 nodes:
   - id: scope

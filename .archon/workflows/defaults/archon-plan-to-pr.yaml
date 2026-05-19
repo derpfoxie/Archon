@@ -1,20 +1,20 @@
 name: archon-plan-to-pr
 description: |
-  Use when: You have an existing implementation plan and want to execute it end-to-end.
-  Input: Path to a plan file ($ARTIFACTS_DIR/plan.md or .agents/plans/*.md)
-  Output: PR ready for merge with comprehensive review completed
+  Use when: 有一份现有的实现计划，希望端到端执行它。
+  Input: 计划文件路径（$ARTIFACTS_DIR/plan.md 或 .agents/plans/*.md）
+  Output: 准备合并的 PR，已完成全面 review
 
-  Full workflow:
-  1. Read plan, setup branch, extract scope limits
-  2. Verify plan research is still valid
-  3. Implement all tasks with type-checking
-  4. Run full validation suite
-  5. Create PR with template, mark ready
-  6. Comprehensive code review (5 parallel agents with scope limit awareness)
-  7. Synthesize and fix review findings
-  8. Final summary with decision matrix -> GitHub comment + follow-up recommendations
+  完整工作流：
+  1. 读取计划、设置分支、提取范围限制
+  2. 验证计划调研仍然有效
+  3. 带类型检查地实现所有任务
+  4. 运行完整校验套件
+  5. 用模板创建 PR，标记为 ready
+  6. 全面 code review（5 个并行 agent，带范围限制感知）
+  7. 综合并修复 review 发现
+  8. 最终总结与决策矩阵 → GitHub 评论 + 后续建议
 
-  NOT for: Creating plans from scratch (use archon-idea-to-pr), quick fixes, standalone reviews.
+  NOT for: 从零开始创建计划（请用 archon-idea-to-pr）、快速修复、独立 review。
 
 nodes:
   # ═══════════════════════════════════════════════════════════════════

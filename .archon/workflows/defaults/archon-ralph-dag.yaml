@@ -1,16 +1,16 @@
 name: archon-ralph-dag
 description: |
-  Use when: User wants to run a Ralph implementation loop.
+  Use when: 希望运行 Ralph 实现循环。
   Triggers: "ralph", "run ralph", "ralph dag", "run ralph dag".
 
-  DAG workflow that:
-  1. Detects input: existing prd.json, existing prd.md (needs stories), or raw idea
-  2. Generates prd.md + prd.json if needed (explores codebase, breaks into stories)
-  3. Validates PRD files, reads project context, installs dependencies
-  4. Runs Ralph loop (fresh context per iteration) implementing one story per iteration
-  5. Creates PR and reports completion
+  DAG 工作流：
+  1. 检测输入：现有 prd.json、现有 prd.md（需要故事）、或原始想法
+  2. 如果需要，生成 prd.md + prd.json（探索代码库、分解为故事）
+  3. 验证 PRD 文件、读取项目上下文、安装依赖
+  4. 运行 Ralph 循环（每次迭代使用新上下文），每次迭代实现一个故事
+  5. 创建 PR 并报告完成
 
-  Accepts: An idea description, a path to an existing prd.md, or a directory with prd.md + prd.json
+  接受：想法描述、现有 prd.md 的路径、或包含 prd.md + prd.json 的目录
 
 provider: claude
 

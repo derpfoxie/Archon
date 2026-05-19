@@ -1,16 +1,15 @@
 name: archon-assist
 description: |
-  Use when: No other workflow matches the request.
-  Handles: Questions, debugging, exploration, one-off tasks, explanations, CI failures, general help.
-  Capability: Full Claude Code agent with all tools available.
-  Note: Will inform user when assist mode is used for tracking.
+  Use when: 没有其他工作流匹配请求时使用。
+  Handles: 问题、调试、探索、一次性任务、解释说明、CI 失败、通用帮助。
+  Capability: 完整的 Claude Code agent，所有工具可用。
+  Note: 使用 assist 模式时会通知用户，便于追踪。
 
-# Run in the live checkout, not in a fresh sub-worktree. Without this, every
-# auto-routed `archon-assist` invocation creates an isolated sub-worktree
-# whose edits are unreachable from the calling chat (no commit step, no
-# branch propagation back). With `worktree.enabled: false`, edits land in
-# the parent's working tree where syncWorkspace's #1516 fast-forward
-# default keeps them safe across chat ticks. Closes #1546.
+# 在当前工作目录中运行，而不是在新的子工作树中。否则，每个自动路由的
+# `archon-assist` 调用都会创建一个隔离的子工作树，其编辑对调用聊天不可达
+# （没有提交步骤，没有分支回传）。设置 `worktree.enabled: false` 后，编辑会
+# 落在父级工作树中，syncWorkspace 的 #1516 快进默认行为会在聊天轮次间保持
+# 这些编辑的安全。关闭 #1546。
 worktree:
   enabled: false
 

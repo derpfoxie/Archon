@@ -1,16 +1,16 @@
 name: archon-issue-review-full
 description: |
-  Use when: User wants a FULL, COMPREHENSIVE fix + review pipeline for a GitHub issue.
+  Use when: 希望对 GitHub issue 进行完整的、全面的修复 + review 流程。
   Triggers: "full review", "comprehensive fix", "fix with full review", "deep review", "issue review full".
-  NOT for: Simple issue fixes (use archon-fix-github-issue instead),
-           questions about issues, CI failures, PR reviews, general exploration.
+  NOT for: 简单 issue 修复（请用 archon-fix-github-issue）、
+           关于 issue 的询问、CI 失败、PR review、一般探索。
 
-  Full workflow:
-  1. Investigate issue -> root cause analysis, implementation plan
-  2. Implement fix -> code changes, tests, PR creation
-  3. Comprehensive review -> 5 parallel agents with scope awareness
-  4. Fix review issues -> address CRITICAL/HIGH findings
-  5. Final summary -> decision matrix, follow-up recommendations
+  完整工作流：
+  1. 调研 issue → 根因分析、实现计划
+  2. 实现修复 → 代码变更、测试、创建 PR
+  3. 全面 review → 5 个并行 agent，带范围感知
+  4. 修复 review 问题 → 处理 CRITICAL/HIGH 发现
+  5. 最终总结 → 决策矩阵、后续建议
 
 nodes:
   # ═══════════════════════════════════════════════════════════════════

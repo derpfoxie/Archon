@@ -1,22 +1,22 @@
 name: archon-interactive-prd
 description: |
-  Use when: User wants to create a PRD through guided conversation.
+  Use when: 希望通过引导式对话创建 PRD。
   Triggers: "create a prd", "new prd", "interactive prd", "plan a feature",
             "product requirements", "write a prd".
-  NOT for: Autonomous PRD generation without human input (use archon-ralph-generate).
+  NOT for: 没有人工输入的自主 PRD 生成（请用 archon-ralph-generate）。
 
-  Interactive workflow that guides the user through problem-first PRD creation:
-  1. Understand the idea → ask foundation questions → wait for answers
-  2. Research market & codebase → ask deep dive questions → wait for answers
-  3. Assess technical feasibility → ask scope questions → wait for answers
-  4. Generate PRD → validate technical claims against codebase → output
+  交互式工作流，引导用户进行问题优先的 PRD 创建：
+  1. 理解想法 → 询问基础问题 → 等待回答
+  2. 调研市场和代码库 → 询问深入问题 → 等待回答
+  3. 评估技术可行性 → 询问范围问题 → 等待回答
+  4. 生成 PRD → 对照代码库验证技术声明 → 输出
 
 provider: claude
 interactive: true
 
 nodes:
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 1: INITIATE — Understand the idea
+  # 阶段 1：启动 — 理解想法
   # ═══════════════════════════════════════════════════════════════
 
   - id: initiate
@@ -46,7 +46,7 @@ nodes:
       Keep it conversational. Don't generate any PRD content yet.
 
   # ═══════════════════════════════════════════════════════════════
-  # GATE 1: User answers foundation questions
+  # 门控 1：用户回答基础问题
   # ═══════════════════════════════════════════════════════════════
 
   - id: foundation-gate
@@ -56,7 +56,7 @@ nodes:
     depends_on: [initiate]
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 2: GROUNDING — Research market & codebase
+  # 阶段 2：落地 — 调研市场和代码库
   # ═══════════════════════════════════════════════════════════════
 
   - id: research
@@ -101,7 +101,7 @@ nodes:
     depends_on: [foundation-gate]
 
   # ═══════════════════════════════════════════════════════════════
-  # GATE 2: User answers deep dive questions
+  # 门控 2：用户回答深入问题
   # ═══════════════════════════════════════════════════════════════
 
   - id: deepdive-gate
@@ -111,7 +111,7 @@ nodes:
     depends_on: [research]
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 3: TECHNICAL GROUNDING — Feasibility from what exists
+  # 阶段 3：技术落地 — 基于现有实现的可行性
   # ═══════════════════════════════════════════════════════════════
 
   - id: technical
@@ -168,7 +168,7 @@ nodes:
     depends_on: [deepdive-gate]
 
   # ═══════════════════════════════════════════════════════════════
-  # GATE 3: User answers scope questions
+  # 门控 3：用户回答范围问题
   # ═══════════════════════════════════════════════════════════════
 
   - id: scope-gate
@@ -178,7 +178,7 @@ nodes:
     depends_on: [technical]
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 4: GENERATE — Write the PRD
+  # 阶段 4：生成 — 编写 PRD
   # ═══════════════════════════════════════════════════════════════
 
   - id: generate
@@ -235,7 +235,7 @@ nodes:
     depends_on: [scope-gate]
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 5: VALIDATE — Check technical claims against codebase
+  # 阶段 5：验证 — 对照代码库检查技术声明
   # ═══════════════════════════════════════════════════════════════
 
   - id: validate

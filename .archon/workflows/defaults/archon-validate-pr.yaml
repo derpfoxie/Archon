@@ -1,14 +1,14 @@
 name: archon-validate-pr
 description: |
-  Use when: User wants a thorough PR validation that tests both main (bug present) and feature branch (bug fixed).
+  Use when: 希望进行彻底的 PR 验证，同时测试 main（bug 存在）和 feature 分支（bug 已修复）。
   Triggers: "validate PR", "validate pr #123", "test this PR", "verify PR", "full PR validation",
             "validate pull request", "test PR end-to-end".
-  Does: Fetches PR info -> finds free ports -> parallel code review (main vs feature) ->
-        E2E test on main (reproduce bug) -> E2E test on feature (verify fix) -> final verdict report.
-  NOT for: Quick code-only reviews (use archon-smart-pr-review), fixing issues, general exploration.
+  Does: 获取 PR 信息 → 查找空闲端口 → 并行 code review（main vs feature）→
+        在 main 上 E2E 测试（复现 bug）→ 在 feature 上 E2E 测试（验证修复）→ 最终判定报告。
+  NOT for: 快速仅代码 review（请用 archon-smart-pr-review）、修复问题、一般探索。
 
-  This workflow is designed for running in parallel — each instance finds its own free ports
-  to avoid conflicts. Produces artifacts in $ARTIFACTS_DIR/ and posts a validation report.
+  此工作流设计为并行运行 — 每个实例查找自己的空闲端口以避免冲突。
+  在 $ARTIFACTS_DIR/ 中生成产物并发布验证报告。
 
 provider: claude
 model: opus

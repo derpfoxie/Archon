@@ -1,20 +1,20 @@
 name: archon-piv-loop
 description: |
-  Use when: User wants guided Plan-Implement-Validate development with human-in-the-loop.
+  Use when: 希望进行带人工介入的引导式 Plan-Implement-Validate 开发。
   Triggers: "piv", "piv loop", "plan implement validate", "guided development",
             "structured development", "build a feature", "develop with review".
-  NOT for: Autonomous implementation without planning (use archon-feature-development).
-  NOT for: PRD creation (use archon-interactive-prd).
-  NOT for: Ralph story-based implementation (use archon-ralph-dag).
+  NOT for: 没有计划的自主实现（请用 archon-feature-development）。
+  NOT for: PRD 创建（请用 archon-interactive-prd）。
+  NOT for: 基于故事的 Ralph 实现（请用 archon-ralph-dag）。
 
-  Interactive PIV loop workflow — the foundational AI coding methodology:
-  1. EXPLORE: Iterative conversation with human to understand the problem (arbitrary rounds)
-  2. PLAN: Create structured plan -> iterative review & revision (arbitrary rounds)
-  3. IMPLEMENT: Autonomous task-by-task implementation from plan (Ralph loop)
-  4. VALIDATE: Automated code review -> iterative human feedback & fixes (arbitrary rounds)
+  交互式 PIV 循环工作流 — 基础 AI 编码方法论：
+  1. 探索：与人类迭代对话以理解问题（任意轮次）
+  2. 计划：创建结构化计划 → 迭代 review 和修订（任意轮次）
+  3. 实现：从计划进行自主的逐任务实现（Ralph 循环）
+  4. 校验：自动化 code review → 迭代人工反馈和修复（任意轮次）
 
-  The PIV loop comes AFTER a PRD exists. Each PIV loop focuses on ONE granular feature or bug fix.
-  Input: A description of what to build, a path to an existing plan, or a GitHub issue number.
+  PIV 循环在 PRD 存在之后进行。每个 PIV 循环聚焦于一个细粒度功能或 bug 修复。
+  输入：要构建什么的描述、现有计划的路径、或 GitHub issue 编号。
 
 provider: claude
 interactive: true

@@ -1,28 +1,28 @@
 name: archon-fix-github-issue
 description: |
-  Use when: User wants to FIX, RESOLVE, or IMPLEMENT a solution for a GitHub issue.
+  Use when: 希望修复、解决或为某个 GitHub issue 实现解决方案。
   Triggers: "fix this issue", "implement issue #123", "resolve this bug", "fix it",
             "fix issue", "resolve issue", "fix #123".
-  NOT for: Comprehensive multi-agent reviews (use archon-issue-review-full),
-           questions about issues, CI failures, PR reviews, general exploration.
+  NOT for: 综合多 agent review（请用 archon-issue-review-full）、关于 issue 的
+           询问、CI 失败、PR review、一般探索。
 
-  DAG workflow that:
-  1. Classifies the issue (bug/feature/enhancement/etc)
-  2. Researches context (web research + codebase exploration via investigate/plan)
-  3. Routes to investigate (bugs) or plan (features) based on classification
-  4. Implements the fix/feature with validation
-  5. Creates a draft PR using the repo's PR template
-  6. Runs smart review (always code review + CLAUDE.md check, conditional additional agents)
-  7. Aggressively self-fixes all findings (tests, docs, error handling)
-  8. Simplifies changed code (implements fixes directly, not just reports)
-  9. Reports results back to the GitHub issue with follow-up suggestions
+  DAG 工作流：
+  1. 对 issue 分类（bug / 功能 / 增强 等）
+  2. 调研上下文（联网调研 + 通过 investigate / plan 探索代码库）
+  3. 根据分类路由到 investigate（bug）或 plan（功能）
+  4. 带校验地实现修复 / 功能
+  5. 用仓库 PR 模板创建 draft PR
+  6. 运行 smart review（始终 code review + CLAUDE.md 检查，条件性额外 agents）
+  7. 激进地自修复所有发现（测试、文档、错误处理）
+  8. 简化变更的代码（直接实现修复，不只是报告）
+  9. 将结果报告回 GitHub issue，并附上后续建议
 
 provider: claude
 model: sonnet
 
 nodes:
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 1: FETCH & CLASSIFY
+  # 阶段 1：获取 & 分类
   # ═══════════════════════════════════════════════════════════════
 
   - id: extract-issue-number
@@ -84,7 +84,7 @@ nodes:
       required: [issue_type, title, reasoning]
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 2: RESEARCH (parallel with PR template fetch)
+  # 阶段 2：调研（与 PR 模板获取并行）
   # ═══════════════════════════════════════════════════════════════
 
   - id: web-research
@@ -93,7 +93,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 3: INVESTIGATE (bugs) / PLAN (features)
+  # 阶段 3：调研（bug）/ 计划（功能）
   # ═══════════════════════════════════════════════════════════════
 
   - id: investigate
@@ -108,10 +108,10 @@ nodes:
     when: "$classify.output.issue_type != 'bug'"
     context: fresh
 
-  # Bridge: ensure investigation.md exists for the implement step
-  # archon-fix-issue reads from $ARTIFACTS_DIR/investigation.md
-  # archon-create-plan writes to $ARTIFACTS_DIR/plan.md
-  # This node copies plan.md → investigation.md when the plan path was taken
+  # 桥接：确保 investigation.md 存在于实现步骤
+  # archon-fix-issue 从 $ARTIFACTS_DIR/investigation.md 读取
+  # archon-create-plan 写入 $ARTIFACTS_DIR/plan.md
+  # 此节点在走计划路径时将 plan.md 复制到 investigation.md
   - id: bridge-artifacts
     bash: |
       if [ -f "$ARTIFACTS_DIR/plan.md" ] && [ ! -f "$ARTIFACTS_DIR/investigation.md" ]; then
@@ -126,7 +126,7 @@ nodes:
     trigger_rule: one_success
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 4: IMPLEMENT
+  # 阶段 4：实现
   # ═══════════════════════════════════════════════════════════════
 
   - id: implement
@@ -136,7 +136,7 @@ nodes:
     model: opus[1m]
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 5: VALIDATE
+  # 阶段 5：校验
   # ═══════════════════════════════════════════════════════════════
 
   - id: validate
@@ -145,7 +145,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 6: CREATE DRAFT PR
+  # 阶段 6：创建 Draft PR
   # ═══════════════════════════════════════════════════════════════
 
   - id: create-pr
@@ -192,7 +192,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 7: REVIEW
+  # 阶段 7：Review
   # ═══════════════════════════════════════════════════════════════
 
   - id: verify-pr-base
@@ -268,7 +268,7 @@ nodes:
         - run_docs_impact
         - reasoning
 
-  # Code review always runs — mandatory
+  # Code review 总是运行 — 强制性
   - id: code-review
     command: archon-code-review-agent
     depends_on: [review-classify]
@@ -299,7 +299,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 8: SYNTHESIZE + SELF-FIX
+  # 阶段 8：综合 + 自修复
   # ═══════════════════════════════════════════════════════════════
 
   - id: synthesize
@@ -314,7 +314,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 9: SIMPLIFY
+  # 阶段 9：简化
   # ═══════════════════════════════════════════════════════════════
 
   - id: simplify
@@ -323,7 +323,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 10: REPORT
+  # 阶段 10：报告
   # ═══════════════════════════════════════════════════════════════
 
   - id: report

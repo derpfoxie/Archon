@@ -1,54 +1,53 @@
 name: archon-create-issue
 description: |
-  Use when: User wants to report a bug or problem as a GitHub issue with automated reproduction.
+  Use when: 希望把一个 bug 或问题作为 GitHub issue 上报，并自动提供复现。
   Triggers: "create issue", "file a bug", "report this bug", "open an issue for",
             "create github issue", "report issue", "log this bug".
-  Does: Classifies problem area (haiku) -> gathers context in parallel (templates, git state, duplicates) ->
-        investigates relevant code -> reproduces the issue using area-specific tools (agent-browser, CLI, DB queries) ->
-        gates on reproduction success -> creates issue with full evidence OR reports back if cannot reproduce.
-  NOT for: Feature requests, enhancements, or non-bug work. Only for bugs/problems.
+  Does: 分类问题领域（haiku）→ 并行收集上下文（模板、git 状态、重复 issue）→
+        调研相关代码 → 用领域专属工具复现（agent-browser、CLI、数据库查询等）→
+        在复现成功这一道关上把关 → 带完整证据创建 issue；如无法复现则反馈给用户。
+  NOT for: 功能请求、增强建议或非 bug 类工作。仅用于 bug / 问题。
 
-  Reproduction gating: If the issue cannot be reproduced, the workflow does NOT create an issue.
-  Instead, it reports what was tried and suggests next steps to the user.
+  复现门控：如果无法复现，工作流不会创建 issue；它会反馈尝试过的做法，并向用户
+  提出后续步骤建议。
 
 nodes:
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 1: CLASSIFY — Haiku classification of user's problem
+  # 阶段 1：分类 — 用 Haiku 对用户问题分类
   # ═══════════════════════════════════════════════════════════════
 
   - id: classify
     prompt: |
-      You are a problem classifier for the Archon codebase. Analyze the user's
-      description and determine the issue type and which area of the system is affected.
+      你是 Archon 代码库的问题分类器。分析用户的描述，确定问题类型和受影响的系统区域。
 
-      ## User's Description
+      ## 用户描述
       $ARGUMENTS
 
-      ## Area Definitions
-      | Area | Packages | Indicators |
+      ## 区域定义
+      | 区域 | 包 | 指标 |
       |------|----------|------------|
-      | web-ui | @archon/web, @archon/server (routes, web adapter) | UI rendering, SSE streaming, React components, browser behavior |
-      | api-server | @archon/server (routes, middleware) | HTTP endpoints, response codes, request handling |
-      | cli | @archon/cli | CLI commands, workflow invocation from terminal, output formatting |
-      | isolation | @archon/isolation, @archon/git | Worktrees, branch operations, cleanup, environment lifecycle |
-      | workflows | @archon/workflows | YAML parsing, DAG execution, variable substitution, node types |
-      | database | @archon/core (db/) | SQLite/PostgreSQL queries, schema, data integrity, migrations |
-      | adapters | @archon/adapters | Slack/Telegram/GitHub/Discord message handling, auth, polling |
-      | core | @archon/core (orchestrator, handlers, clients) | Message routing, session management, AI client streaming |
-      | other | Any package not covered above | Cross-cutting concerns, build tooling, config, unknown area |
+      | web-ui | @archon/web, @archon/server (routes, web adapter) | UI 渲染、SSE 流、React 组件、浏览器行为 |
+      | api-server | @archon/server (routes, middleware) | HTTP 端点、响应码、请求处理 |
+      | cli | @archon/cli | CLI 命令、从终端调用工作流、输出格式化 |
+      | isolation | @archon/isolation, @archon/git | 工作树、分支操作、清理、环境生命周期 |
+      | workflows | @archon/workflows | YAML 解析、DAG 执行、变量替换、节点类型 |
+      | database | @archon/core (db/) | SQLite/PostgreSQL 查询、schema、数据完整性、迁移 |
+      | adapters | @archon/adapters | Slack/Telegram/GitHub/Discord 消息处理、认证、轮询 |
+      | core | @archon/core (orchestrator, handlers, clients) | 消息路由、会话管理、AI 客户端流 |
+      | other | 以上未涵盖的任何包 | 横切关注点、构建工具、配置、未知区域 |
 
-      ## Classification Rules
-      - Choose the MOST SPECIFIC area. "SSE disconnects" = web-ui (not api-server).
-      - If ambiguous between two areas, pick the one closer to the user-facing symptom.
-      - Use "other" only when the problem genuinely doesn't fit any specific area.
-      - needs_server: Set to "true" if reproducing requires a running Archon server.
-        Typically true for: web-ui, api-server, core, adapters.
-        Typically false for: cli, isolation, workflows, database.
-        For "other": use your judgment based on the description.
-      - repro_hint: Extract the user's reproduction steps into a concise instruction.
-        If no explicit steps given, infer the most likely way to trigger the issue.
+      ## 分类规则
+      - 选择最具体的区域。"SSE 断开连接" = web-ui（不是 api-server）。
+      - 如果两个区域模糊不清，选择更接近用户面向症状的那个。
+      - 只在问题确实不属于任何特定区域时使用 "other"。
+      - needs_server：如果复现需要运行 Archon 服务器则设为 "true"。
+        通常为 true：web-ui、api-server、core、adapters。
+        通常为 false：cli、isolation、workflows、database。
+        对于 "other"：根据描述自行判断。
+      - repro_hint：将用户的复现步骤提取为简洁的指令。
+        如果没有给出明确步骤，推断触发问题的最可能方式。
 
-      Provide reasoning for your classification.
+      提供你的分类推理。
     model: haiku
     allowed_tools: []
     output_format:
@@ -72,38 +71,38 @@ nodes:
       required: [type, area, title, keywords, repro_hint, needs_server]
 
   # ═══════════════════════════════════════════════════════════════
-  # PHASE 2: PARALLEL CONTEXT GATHERING
+  # 阶段 2：并行收集上下文
   # ═══════════════════════════════════════════════════════════════
 
   - id: fetch-template
     bash: |
-      # Search for GitHub issue templates in standard locations
+      # 在标准位置搜索 GitHub issue 模板
       TEMPLATES_FOUND=0
 
-      # Check for issue template directory (YAML-based templates)
+      # 检查 issue 模板目录（基于 YAML 的模板）
       if [ -d ".github/ISSUE_TEMPLATE" ]; then
-        echo "=== Issue Templates Found ==="
+        echo "=== 找到 Issue 模板 ==="
         for f in .github/ISSUE_TEMPLATE/*.md .github/ISSUE_TEMPLATE/*.yaml .github/ISSUE_TEMPLATE/*.yml; do
           if [ -f "$f" ]; then
             TEMPLATES_FOUND=$((TEMPLATES_FOUND + 1))
-            echo "--- Template: $f ---"
+            echo "--- 模板: $f ---"
             cat "$f"
             echo ""
           fi
         done
       fi
 
-      # Check for single issue template
+      # 检查单个 issue 模板
       for f in .github/ISSUE_TEMPLATE.md docs/ISSUE_TEMPLATE.md; do
         if [ -f "$f" ]; then
           TEMPLATES_FOUND=$((TEMPLATES_FOUND + 1))
-          echo "--- Template: $f ---"
+          echo "--- 模板: $f ---"
           cat "$f"
         fi
       done
 
       if [ "$TEMPLATES_FOUND" -eq 0 ]; then
-        echo "No issue templates found — will use standard format"
+        echo "未找到 issue 模板 — 将使用标准格式"
       fi
     depends_on: [classify]
 

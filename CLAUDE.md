@@ -728,12 +728,11 @@ async function createSession(conversationId: string, codebaseId: string) {
 - Opt-out: Set `defaults.loadDefaultCommands: false` or `defaults.loadDefaultWorkflows: false` in `.archon/config.yaml`
 - **After adding, removing, or editing a default file, run `bun run generate:bundled`** to refresh the embedded bundle. `bun run validate` (and CI) run `check:bundled` and `check:bundled-skill` and will fail loudly if either generated file is stale.
 
-**中文镜像工作流（fork 维护）：**
-- `.archon/workflows/defaults/<name>-zh.yaml` 由 `bun run generate:zh-workflows` 从英文版自动生成；翻译表在 `scripts/zh-workflow-translations.yaml`
-- 镜像复用同一份英文 command md（不复制 `.archon/commands/defaults/`），通过节点级 `systemPrompt: "Respond in Simplified Chinese (简体中文)."` 让 AI 输出中文，保留英文 prompt 的训练优势
-- 翻译表覆盖 `description` / approval `message` / approval `on_reject_prompt` / loop `gate_message`；翻译缺失时生成器报错列出缺失项
-- **不要手改 `*-zh.yaml`** —— 文件头部即标 `AUTO-GENERATED MIRROR — DO NOT EDIT BY HAND`；改翻译表后跑 `bun run generate:zh-workflows` 重生
-- `bun run generate:bundled` 与 `bun run check:bundled` 已串联调用 `generate:zh-workflows` / `check:zh-workflows`，每次 bundled 重生都会先重生镜像，CI 兜底
+**内置工作流中文化（fork 维护）：**
+- 内置 `.archon/workflows/defaults/*.yaml` 直接以简体中文维护，包括：`description`、YAML 注释、内联 `prompt:` 主体、approval `message` / `on_reject_prompt`、loop `gate_message` 等所有面向用户/模型的文本
+- 引用的 command md 文件（`.archon/commands/defaults/*.md`）暂保持英文；如某条 command 需要中文输出，可在调用节点上加 `systemPrompt: "Respond in Simplified Chinese (简体中文)."`
+- 不再有 `*-zh.yaml` 镜像、`scripts/generate-zh-mirror-workflows.ts`、`scripts/zh-workflow-translations.yaml` —— 这些已在"方案 C"重构中废弃，避免双份文件维护成本与 upstream diff 跟踪割裂
+- merge upstream 时英文 yaml 直接对位合并，不再有镜像层；如 upstream 改了某个 default workflow，直接在我们已中文化的同文件上解冲突即可
 
 **Home-scoped ("global") workflows, commands, and scripts** (user-level, applies to every project):
 - Workflows: `~/.archon/workflows/` (or `$ARCHON_HOME/workflows/`)

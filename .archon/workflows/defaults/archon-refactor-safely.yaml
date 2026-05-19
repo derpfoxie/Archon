@@ -1,19 +1,19 @@
 name: archon-refactor-safely
 description: |
-  Use when: User wants to refactor code safely with continuous validation and behavior preservation.
+  Use when: 希望安全地重构代码，带持续校验和行为保留。
   Triggers: "refactor", "refactor safely", "split this file", "extract module", "break up",
             "decompose", "safe refactor", "split file", "extract into modules".
-  Does: Scans refactoring scope -> analyzes impact (read-only) -> plans ordered task list ->
-        executes with type-check hooks after every edit -> validates full suite ->
-        verifies behavior preservation (read-only) -> creates PR with before/after comparison.
-  NOT for: Bug fixes (use archon-fix-github-issue), feature development (use archon-feature-development),
-           general architecture sweeps (use archon-architect), PR reviews.
+  Does: 扫描重构范围 → 分析影响（只读）→ 规划有序任务列表 →
+        每次编辑后带类型检查 hook 地执行 → 校验完整套件 →
+        验证行为保留（只读）→ 创建带前后对比的 PR。
+  NOT for: bug 修复（请用 archon-fix-github-issue）、功能开发（请用 archon-feature-development）、
+           一般架构扫描（请用 archon-architect）、PR review。
 
-  Key safety features:
-  - Analysis and verification nodes are read-only (denied_tools: [Write, Edit, Bash])
-  - PreToolUse hooks check if each edit is in the plan
-  - PostToolUse hooks force type-check after every file change
-  - Behavior verification confirms no logic changes after refactoring
+  关键安全特性：
+  - 分析和验证节点是只读的（denied_tools: [Write, Edit, Bash]）
+  - PreToolUse hook 检查每个编辑是否在计划中
+  - PostToolUse hook 在每次文件变更后强制类型检查
+  - 行为验证确认重构后没有逻辑变更
 
 provider: claude
 

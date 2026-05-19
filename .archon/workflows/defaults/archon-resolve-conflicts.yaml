@@ -1,14 +1,14 @@
 name: archon-resolve-conflicts
 description: |
-  Use when: PR has merge conflicts that need resolution.
+  Use when: PR 有需要解决的合并冲突。
   Triggers: "resolve conflicts", "fix merge conflicts", "rebase this PR", "resolve this",
             "fix conflicts", "merge conflicts", "rebase and fix".
-  Does: Fetches latest base branch -> analyzes conflicts -> auto-resolves simple conflicts ->
-        presents options for complex conflicts -> commits and pushes resolution.
-  NOT for: PRs without conflicts, general rebasing without conflicts, squashing commits.
+  Does: 获取最新基础分支 → 分析冲突 → 自动解决简单冲突 →
+        为复杂冲突呈现选项 → 提交并推送解决方案。
+  NOT for: 没有冲突的 PR、没有冲突的一般 rebase、压缩提交。
 
-  This workflow helps resolve merge conflicts by analyzing the conflicting changes,
-  automatically resolving where intent is clear, and presenting options for complex conflicts.
+  此工作流通过分析冲突的变更来帮助解决合并冲突，在意图清晰时自动解决，
+  并为复杂冲突呈现选项。
 
 nodes:
   - id: resolve

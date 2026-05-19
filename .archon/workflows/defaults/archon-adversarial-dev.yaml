@@ -1,76 +1,73 @@
 name: archon-adversarial-dev
 description: |
-  Use when: User wants to build a complete application from scratch using adversarial development.
+  Use when: 希望从零开始用对抗式开发完整构建一个应用。
   Triggers: "adversarial dev", "adversarial development", "build with adversarial", "gan dev",
             "adversarial build", "build app adversarially", "adversarial coding".
-  Does: Three-role GAN-inspired development — Planner creates spec with sprints, then a state-machine
-        loop alternates between Generator (builds code) and Evaluator (attacks it) with hard pass/fail
-        thresholds. The evaluator's job is to BREAK what the generator builds. If any criterion scores
-        below 7/10, the sprint goes back to the generator with adversarial feedback. Stops on sprint
-        failure after max retries.
-  NOT for: Bug fixes, PR reviews, refactoring existing code, simple one-off tasks.
+  Does: 受 GAN 启发的三角色开发流——Planner 写带 sprint 的需求规格，随后由状态机循环
+        在 Generator（写代码）和 Evaluator（攻击代码）之间切换，并设硬性通过/失败阈值。
+        Evaluator 的目标就是把 Generator 写出的东西打破。任何指标低于 7/10，sprint
+        退回 Generator 并附上对抗式反馈。达到最大重试次数仍失败则停止。
+  NOT for: bug 修复、PR review、重构现有代码、简单的一次性任务。
 
-  Based on Anthropic's harness design article for long-running application development.
-  Separates planning, building, and evaluation into distinct roles with adversarial tension.
+  参考 Anthropic 关于长周期应用开发的 harness 设计文章；把规划、构建、评估三种角色
+  拆开，借助对抗张力提升质量。
 provider: claude
 model: sonnet
 
 nodes:
-  # ─── Phase 1: Planning ───────────────────────────────────────────────
+  # ─── 阶段 1：规划 ───────────────────────────────────────────────
   - id: plan
     prompt: |
-      You are a product planning expert. Your job is to take a short user prompt and expand it
-      into a comprehensive product specification.
+      你是一位产品规划专家。你的工作是接受一个简短的用户提示，并将其扩展为一个全面的产品规格说明。
 
-      ## User Request
+      ## 用户请求
 
       $ARGUMENTS
 
-      ## Your Task
+      ## 你的任务
 
-      Write a comprehensive product specification to the file `$ARTIFACTS_DIR/spec.md` using the Write tool.
+      使用 Write 工具将全面的产品规格说明写入文件 `$ARTIFACTS_DIR/spec.md`。
 
-      The spec MUST include ALL of the following sections:
+      规格说明必须包含以下所有部分：
 
-      ### 1. Product Overview
-      What the product does, who it's for, core value proposition.
+      ### 1. 产品概述
+      产品做什么、面向谁、核心价值主张。
 
-      ### 2. Tech Stack
-      Specific technologies, frameworks, and libraries. Be opinionated — pick concrete choices,
-      not "a modern framework." Include exact package names and versions where relevant.
+      ### 2. 技术栈
+      具体的技术、框架和库。要有主见 — 选择具体方案，不要写"一个现代框架"。在相关处包含确切的包名和版本。
 
-      ### 3. Design Language
-      Visual style, specific color hex codes, typography choices, component patterns, spacing system.
+      ### 3. 设计语言
+      视觉风格、具体的十六进制颜色代码、字体选择、组件模式、间距系统。
 
-      ### 4. Feature List
-      Every feature organized by priority. Be exhaustive.
+      ### 4. 功能列表
+      按优先级组织的每个功能。要详尽无遗。
 
-      ### 5. Sprint Plan
-      Features broken into 3-6 sprints, ordered by dependency and importance:
-      - **Sprint 1** should establish the foundation (project setup, core data models, basic UI shell)
-      - Each subsequent sprint builds on the previous
-      - Label each sprint clearly: "Sprint 1: Foundation", "Sprint 2: Core Features", etc.
-      - List the specific features/deliverables for each sprint
+      ### 5. Sprint 计划
+      将功能分解为 3-6 个 sprint，按依赖性和重要性排序：
+      - **Sprint 1** 应该建立基础（项目设置、核心数据模型、基本 UI 框架）
+      - 每个后续 sprint 建立在前一个基础上
+      - 清晰标记每个 sprint："Sprint 1: 基础"、"Sprint 2: 核心功能"等
+      - 列出每个 sprint 的具体功能/交付物
 
-      Be specific and opinionated. The more concrete the spec (exact API paths, specific color codes,
-      named libraries), the better the generator can build and the evaluator can test.
+      要具体且有主见。规格说明越具体（确切的 API 路径、具体的颜色代码、命名的库），
+      生成器就能越好地构建，评估者就能越好地测试。
 
-      IMPORTANT: Write the spec to `$ARTIFACTS_DIR/spec.md` using the Write tool. Do NOT just output
-      it as conversation text.
+      重要：使用 Write 工具将规格说明写入 `$ARTIFACTS_DIR/spec.md`。不要只是将其
+      输出为对话文本。
     allowed_tools: [Read, Write, Glob, Grep]
 
-  # ─── Phase 2: Workspace Initialization ───────────────────────────────
+  # ─── 阶段 2：工作区初始化 ───────────────────────────────────────
   - id: init-workspace
     depends_on: [plan]
     bash: |
       ARTIFACTS="$ARTIFACTS_DIR"
 
-      # Create directory structure for harness communication
+      # 创建用于 harness 通信的目录结构
       mkdir -p "$ARTIFACTS/contracts"
       mkdir -p "$ARTIFACTS/feedback"
       mkdir -p "$ARTIFACTS/app"
 
-      # Initialize isolated git repo in app directory
+      # 在 app 目录中初始化隔离的 git 仓库
       cd "$ARTIFACTS/app"
       git init -q
       git commit --allow-empty -m "Initial commit: adversarial-dev workspace" -q
@@ -88,7 +85,7 @@ nodes:
         fi
       fi
 
-      # Write initial state machine file
+      # 写入初始状态机文件
       cat > "$ARTIFACTS/state.json" << 'STATEEOF'
       {
         "phase": "negotiating",
@@ -108,11 +105,11 @@ nodes:
       echo "{\"totalSprints\": $SPRINT_COUNT, \"appDir\": \"$ARTIFACTS/app\", \"artifactsDir\": \"$ARTIFACTS\"}"
     timeout: 30000
 
-  # ─── Phase 3: Adversarial Sprint Loop ────────────────────────────────
+  # ─── 阶段 3：对抗式 Sprint 循环 ────────────────────────────────
   #
-  # State machine driven by $ARTIFACTS_DIR/state.json
-  # Each iteration plays ONE role: negotiator, generator, or evaluator
-  # fresh_context ensures genuine separation between roles
+  # 由 $ARTIFACTS_DIR/state.json 驱动的状态机
+  # 每次迭代扮演一个角色：negotiator、generator 或 evaluator
+  # fresh_context 确保角色之间的真实分离
   #
   - id: adversarial-sprint
     depends_on: [init-workspace]
@@ -120,55 +117,55 @@ nodes:
     model: opus[1m]
     loop:
       prompt: |
-        # Adversarial Development — Sprint Loop
+        # 对抗式开发 — Sprint 循环
 
-        You are part of a GAN-inspired adversarial development system with three distinct roles.
-        Each iteration you play ONE role, determined by the current phase in the state file.
+        你是一个受 GAN 启发的对抗式开发系统的一部分，有三个不同的角色。
+        每次迭代你扮演一个角色，由状态文件中的当前阶段决定。
 
-        ## FIRST: Read State
+        ## 首先：读取状态
 
-        Read `$ARTIFACTS_DIR/state.json` to determine:
-        - `phase` — which role you play this iteration
-        - `sprint` — current sprint number
-        - `totalSprints` — how many sprints total
-        - `retry` — current retry attempt (0 = first try)
-        - `maxRetries` — max retries before hard failure (default 3)
-        - `passThreshold` — minimum score to pass (default 7)
+        读取 `$ARTIFACTS_DIR/state.json` 来确定：
+        - `phase` — 你这次迭代扮演哪个角色
+        - `sprint` — 当前 sprint 编号
+        - `totalSprints` — 总共有多少个 sprint
+        - `retry` — 当前重试尝试（0 = 第一次尝试）
+        - `maxRetries` — 硬性失败前的最大重试次数（默认 3）
+        - `passThreshold` — 通过的最低分数（默认 7）
 
-        Then read `$ARTIFACTS_DIR/spec.md` for product context.
+        然后读取 `$ARTIFACTS_DIR/spec.md` 获取产品上下文。
 
-        ## Directory Layout
+        ## 目录布局
 
-        - App source code: `$ARTIFACTS_DIR/app/`
-        - Sprint contracts: `$ARTIFACTS_DIR/contracts/sprint-{N}.json`
-        - Evaluation feedback: `$ARTIFACTS_DIR/feedback/sprint-{N}-round-{R}.json`
-        - State machine: `$ARTIFACTS_DIR/state.json`
+        - 应用源代码：`$ARTIFACTS_DIR/app/`
+        - Sprint 合约：`$ARTIFACTS_DIR/contracts/sprint-{N}.json`
+        - 评估反馈：`$ARTIFACTS_DIR/feedback/sprint-{N}-round-{R}.json`
+        - 状态机：`$ARTIFACTS_DIR/state.json`
 
         ---
 
-        ## ROLE: CONTRACT NEGOTIATOR (phase = "negotiating")
+        ## 角色：合约谈判者（phase = "negotiating"）
 
-        You negotiate the success criteria for the current sprint. Play BOTH sides sequentially:
+        你为当前 sprint 谈判成功标准。依次扮演双方：
 
-        **Step 1 — Generator's Proposal:**
-        Read the spec carefully. Identify what Sprint {N} should deliver based on the sprint plan.
-        Propose a sprint contract with 5-15 specific, testable criteria.
+        **步骤 1 — 生成器的提案：**
+        仔细阅读规格说明。根据 sprint 计划确定 Sprint {N} 应该交付什么。
+        提出一个包含 5-15 个具体、可测试标准的 sprint 合约。
 
-        Each criterion MUST be concrete and verifiable. Examples:
-        - GOOD: "GET /api/tasks returns 200 with JSON array; each item has id (number), title (string), status (string), createdAt (ISO date)"
-        - GOOD: "Clicking the Add Task button opens a modal with title input, priority dropdown (low/medium/high), and due date picker"
-        - BAD: "The API works well"
-        - BAD: "Tasks can be managed"
+        每个标准必须是具体且可验证的。示例：
+        - 好："GET /api/tasks 返回 200 和 JSON 数组；每个项有 id（数字）、title（字符串）、status（字符串）、createdAt（ISO 日期）"
+        - 好："点击添加任务按钮打开一个包含标题输入、优先级下拉菜单（低/中/高）和截止日期选择器的模态框"
+        - 差："API 运行良好"
+        - 差："可以管理任务"
 
-        **Step 2 — Evaluator's Tightening:**
-        Now review your proposal as an adversary. For EACH criterion ask:
-        - Is it specific enough to test programmatically?
-        - What edge cases are missing? (empty inputs, special characters, concurrent requests)
-        - Is the bar high enough, or would sloppy code pass?
+        **步骤 2 — 评估者的强化：**
+        现在作为对手审查你的提案。对每个标准问：
+        - 它是否足够具体，可以进行程序化测试？
+        - 缺少哪些边界情况？（空输入、特殊字符、并发请求）
+        - 标准是否足够高，还是草率的代码也能通过？
 
-        Tighten vague criteria. Add edge cases. Raise the bar.
+        强化模糊的标准。添加边界情况。提高标准。
 
-        **Write the final contract** to `$ARTIFACTS_DIR/contracts/sprint-{N}.json`:
+        **将最终合约写入** `$ARTIFACTS_DIR/contracts/sprint-{N}.json`：
         ```json
         {
           "sprintNumber": <N>,
@@ -176,84 +173,82 @@ nodes:
           "criteria": [
             {
               "name": "short-kebab-name",
-              "description": "Specific, testable description of what must be true",
+              "description": "具体、可测试的必须为真的描述",
               "threshold": 7
             }
           ]
         }
         ```
 
-        **Update state.json**: Set `"phase": "building"`. Keep all other fields unchanged.
+        **更新 state.json**：设置 `"phase": "building"`。保持所有其他字段不变。
 
         ---
 
-        ## ROLE: GENERATOR (phase = "building")
+        ## 角色：生成器（phase = "building"）
 
-        You are a software engineer. Build features that MUST survive an adversarial evaluator
-        who will actively try to break your code.
+        你是一名软件工程师。构建的功能必须能够抵御会积极尝试破坏你代码的对抗式评估者。
 
-        **Read these files:**
-        1. `$ARTIFACTS_DIR/spec.md` — full product spec (design language, tech stack, all features)
-        2. `$ARTIFACTS_DIR/contracts/sprint-{N}.json` — the contract you must satisfy
-        3. If `retry` > 0: read `$ARTIFACTS_DIR/feedback/sprint-{N}-round-{R-1}.json` for the
-           evaluator's previous feedback
+        **读取这些文件：**
+        1. `$ARTIFACTS_DIR/spec.md` — 完整产品规格（设计语言、技术栈、所有功能）
+        2. `$ARTIFACTS_DIR/contracts/sprint-{N}.json` — 你必须满足的合约
+        3. 如果 `retry` > 0：读取 `$ARTIFACTS_DIR/feedback/sprint-{N}-round-{R-1}.json` 获取评估者的先前反馈
 
-        **If this is a RETRY (retry > 0):**
-        Read the feedback CAREFULLY. Every failed criterion must be addressed.
-        - If scores were close (5-6) and trending up: REFINE your approach
-        - If scores were low (1-4) or the approach is fundamentally broken: PIVOT to a new strategy
-        - Address EVERY feedback item — the evaluator WILL check
-        - Re-verify each fix by running the code before committing
+        **如果这是重试（retry > 0）：**
+        仔细阅读反馈。每个失败的标准都必须解决。
+        - 如果分数接近（5-6）且趋势向上：优化你的方法
+        - 如果分数低（1-4）或方法从根本上是错误的：转向新策略
+        - 解决每个反馈项 — 评估者会检查
+        - 在提交前通过运行代码重新验证每个修复
 
-        **Build rules:**
-        - All code goes in `$ARTIFACTS_DIR/app/`
-        - Build ONE feature at a time, verify it works, then commit:
+        **构建规则：**
+        - 所有代码放在 `$ARTIFACTS_DIR/app/`
+        - 一次构建一个功能，验证它能工作，然后提交：
           ```bash
-          cd $ARTIFACTS_DIR/app && git add -A && git commit -m "feat: description of what was built"
+          cd $ARTIFACTS_DIR/app && git add -A && git commit -m "feat: 描述构建了什么"
           ```
-        - Install dependencies as needed (npm/bun/pip/etc)
-        - Test your code — start the server, hit the endpoints, verify the UI renders
-        - Think about what the evaluator will attack: edge cases, error handling, input validation
-        - Build defensively — the evaluator's job is to break you
+        - 根据需要安装依赖（npm/bun/pip 等）
+        - 测试你的代码 — 启动服务器、访问端点、验证 UI 渲染
+        - 思考评估者会攻击什么：边界情况、错误处理、输入验证
+        - 防御性构建 — 评估者的工作就是打破你
 
         **Update state.json**: Set `"phase": "evaluating"`. Keep all other fields unchanged.
 
         ---
 
-        ## ROLE: EVALUATOR (phase = "evaluating")
+        ## 角色：评估者（phase = "evaluating"）
 
-        You are an ADVERSARIAL QA agent. Your mandate is to BREAK what the generator built.
-        You are not helpful. You are not generous. You are an attacker.
+        你是一个对抗式 QA agent。你的任务是打破生成器构建的东西。
+        你不是有帮助的。你不是慷慨的。你是一个攻击者。
 
-        **CRITICAL CONSTRAINTS:**
-        - You are READ-ONLY for source code. NEVER use Write or Edit on files in `$ARTIFACTS_DIR/app/`.
-        - You MAY use Bash to run the app, curl endpoints, run test scripts, check behavior.
-        - You MUST kill any background processes (servers, watchers) you start BEFORE finishing.
-          Use: `pkill -f "node\|bun\|python\|npm" 2>/dev/null || true`
-        - You MUST score EVERY criterion in the contract. No skipping.
+        **关键约束：**
+        - 你对源代码是只读的。永远不要对 `$ARTIFACTS_DIR/app/` 中的文件使用 Write 或 Edit。
+        - 你可以使用 Bash 运行应用、curl 端点、运行测试脚本、检查行为。
+        - 你必须在完成前杀死你启动的任何后台进程（服务器、监视器）。
+          使用：`pkill -f "node\|bun\|python\|npm" 2>/dev/null || true`
+        - 你必须对合约中的每个标准评分。不能跳过。
 
-        **Scoring guidelines:**
-        - **9-10**: Exceptional. Works perfectly including edge cases the contract didn't mention.
-        - **7-8**: Solid. Meets the criterion as stated. Minor polish issues at most.
-        - **5-6**: Partial. Core functionality exists but fails important edge cases or has bugs.
-        - **3-4**: Weak. Barely functional. Major gaps.
-        - **1-2**: Broken. Does not work or is not implemented.
+        **评分指南：**
+        - **9-10**：卓越。完美工作，包括合约未提及的边界情况。
+        - **7-8**：扎实。按所述满足标准。最多只有轻微的打磨问题。
+        - **5-6**：部分。核心功能存在但在重要边界情况下失败或有 bug。
+        - **3-4**：弱。几乎不工作。主要差距。
+        - **1-2**：损坏。不工作或未实现。
 
-        Do NOT grade on a curve. Do NOT give benefit of the doubt. A 7 means "genuinely meets the bar."
-        If something is broken, say it's broken.
+        不要按曲线评分。不要给予怀疑的好处。7 意味着"真正达到标准"。
+        如果某样东西坏了，就说它坏了。
 
-        **Read**: `$ARTIFACTS_DIR/contracts/sprint-{N}.json` for the criteria.
+        **读取**：`$ARTIFACTS_DIR/contracts/sprint-{N}.json` 获取标准。
 
-        **For each criterion:**
-        1. Read the relevant source code
-        2. Run the application (start server, test endpoints, check rendered UI)
-        3. Try to BREAK it — invalid inputs, missing fields, edge cases, error handling gaps
-        4. Score it honestly
+        **对每个标准：**
+        1. 读取相关源代码
+        2. 运行应用（启动服务器、测试端点、检查渲染的 UI）
+        3. 尝试打破它 — 无效输入、缺失字段、边界情况、错误处理差距
+        4. 诚实地评分
 
-        **Write evaluation** to `$ARTIFACTS_DIR/feedback/sprint-{N}-round-{R}.json`:
+        **将评估写入** `$ARTIFACTS_DIR/feedback/sprint-{N}-round-{R}.json`：
         ```json
         {
-          "passed": <true if ALL scores >= passThreshold, false otherwise>,
+          "passed": <如果所有分数 >= passThreshold 则为 true，否则为 false>,
           "scores": {
             "criterion-name": <score>,
             ...
@@ -262,39 +257,39 @@ nodes:
             {
               "criterion": "criterion-name",
               "score": <1-10>,
-              "details": "Specific findings. Include file paths, line numbers, exact error messages, curl commands that failed."
+              "details": "具体发现。包含文件路径、行号、确切错误消息、失败的 curl 命令。"
             }
           ],
-          "overallSummary": "What worked, what didn't, what the generator must fix."
+          "overallSummary": "什么有效、什么无效、生成器必须修复什么。"
         }
         ```
 
-        **Determine pass/fail** — `passed` is `true` ONLY if every single score >= `passThreshold`.
+        **确定通过/失败** — `passed` 只有在每个分数都 >= `passThreshold` 时才为 `true`。
 
-        **Update state.json based on result:**
+        **根据结果更新 state.json：**
 
-        **If PASSED (all criteria >= threshold):**
-        - Add current sprint number to `completedSprints` array
-        - If `sprint` < `totalSprints`: set `"phase": "negotiating"`, increment `"sprint"` by 1, set `"retry": 0`
-        - If `sprint` == `totalSprints`: set `"phase": "complete"`, set `"status": "complete"`
+        **如果通过（所有标准 >= 阈值）：**
+        - 将当前 sprint 编号添加到 `completedSprints` 数组
+        - 如果 `sprint` < `totalSprints`：设置 `"phase": "negotiating"`，将 `"sprint"` 加 1，设置 `"retry": 0`
+        - 如果 `sprint` == `totalSprints`：设置 `"phase": "complete"`，设置 `"status": "complete"`
 
-        **If FAILED:**
-        - If `retry` < `maxRetries`: set `"phase": "building"`, increment `"retry"` by 1
-        - If `retry` >= `maxRetries`: set `"phase": "failed"`, set `"status": "failed"`
+        **如果失败：**
+        - 如果 `retry` < `maxRetries`：设置 `"phase": "building"`，将 `"retry"` 加 1
+        - 如果 `retry` >= `maxRetries`：设置 `"phase": "failed"`，设置 `"status": "failed"`
 
-        **IMPORTANT**: Kill all background processes before finishing:
+        **重要**：完成前杀死所有后台进程：
         ```bash
         pkill -f "node|bun|python|npm|next|vite|webpack" 2>/dev/null || true
         ```
 
         ---
 
-        ## COMPLETION
+        ## 完成
 
-        After updating state.json, check the `status` field:
-        - If `"status": "complete"` → all sprints passed! Output: `<promise>ALL_SPRINTS_COMPLETE</promise>`
-        - If `"status": "failed"` → sprint failed after max retries. Output: `<promise>ALL_SPRINTS_COMPLETE</promise>`
-        - If `"status": "running"` → more work to do. Do NOT output any completion signal.
+        更新 state.json 后，检查 `status` 字段：
+        - 如果 `"status": "complete"` → 所有 sprint 通过！输出：`<promise>ALL_SPRINTS_COMPLETE</promise>`
+        - 如果 `"status": "failed"` → sprint 在最大重试次数后失败。输出：`<promise>ALL_SPRINTS_COMPLETE</promise>`
+        - 如果 `"status": "running"` → 还有更多工作要做。不要输出任何完成信号。
 
       until: ALL_SPRINTS_COMPLETE
       max_iterations: 60
@@ -302,45 +297,44 @@ nodes:
       until_bash: |
         grep -qE '"status"\s*:\s*"(complete|failed)"' "$ARTIFACTS_DIR/state.json"
 
-  # ─── Phase 4: Report ─────────────────────────────────────────────────
+  # ─── 阶段 4：报告 ─────────────────────────────────────────────────
   - id: report
     depends_on: [adversarial-sprint]
     trigger_rule: all_done
     context: fresh
     model: haiku
     prompt: |
-      You are a project reporter. Generate a comprehensive summary of the adversarial development run.
+      你是一名项目报告者。生成对抗式开发运行的全面总结。
 
-      ## Read ALL of these files:
-      1. `$ARTIFACTS_DIR/state.json` — final state (tells you success/failure, sprint count)
-      2. `$ARTIFACTS_DIR/spec.md` — the original product spec
-      3. All files in `$ARTIFACTS_DIR/contracts/` — sprint contracts (use Glob to find them)
-      4. All files in `$ARTIFACTS_DIR/feedback/` — evaluation results (use Glob to find them)
+      ## 读取所有这些文件：
+      1. `$ARTIFACTS_DIR/state.json` — 最终状态（告诉你成功/失败、sprint 计数）
+      2. `$ARTIFACTS_DIR/spec.md` — 原始产品规格
+      3. `$ARTIFACTS_DIR/contracts/` 中的所有文件 — sprint 合约（使用 Glob 查找它们）
+      4. `$ARTIFACTS_DIR/feedback/` 中的所有文件 — 评估结果（使用 Glob 查找它们）
 
-      ## Generate a report covering:
+      ## 生成包含以下内容的报告：
 
-      ### Build Summary
-      - What application was built (from the spec)
-      - Final status: did all sprints pass or did it fail? On which sprint?
-      - Total sprints completed vs planned
+      ### 构建总结
+      - 构建了什么应用（来自规格说明）
+      - 最终状态：所有 sprint 通过还是失败？在哪个 sprint？
+      - 完成的 sprint 总数 vs 计划的
 
-      ### Per-Sprint Breakdown
-      For each sprint that was attempted:
-      - What the contract required (features + key criteria)
-      - How many attempts were needed (retry count)
-      - Final scores for each criterion
-      - Key feedback that drove retries and improvements
+      ### 每个 Sprint 的分解
+      对每个尝试的 sprint：
+      - 合约要求什么（功能 + 关键标准）
+      - 需要多少次尝试（重试计数）
+      - 每个标准的最终分数
+      - 驱动重试和改进的关键反馈
 
-      ### Quality Metrics
-      - Average score across all final-round criteria
-      - Which criteria required the most retries
-      - Where the adversarial evaluator pushed quality the highest
+      ### 质量指标
+      - 所有最终轮标准的平均分数
+      - 哪些标准需要最多重试
+      - 对抗式评估者在哪里推动了最高质量
 
-      ### How to Run
-      - The application code lives in: `$ARTIFACTS_DIR/app/`
-      - Include the tech stack and how to start the app (from the spec)
-      - Include any setup steps (install deps, env vars, etc.)
+      ### 如何运行
+      - 应用代码位于：`$ARTIFACTS_DIR/app/`
+      - 包含技术栈和如何启动应用（来自规格说明）
+      - 包含任何设置步骤（安装依赖、环境变量等）
 
-      Write this report to `$ARTIFACTS_DIR/report.md` AND output it as your response so the user
-      sees it directly.
+      将此报告写入 `$ARTIFACTS_DIR/report.md` 并将其作为你的响应输出，以便用户直接看到。
     allowed_tools: [Read, Write, Glob, Grep]

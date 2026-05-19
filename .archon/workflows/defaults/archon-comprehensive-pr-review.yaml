@@ -1,14 +1,14 @@
 name: archon-comprehensive-pr-review
 description: |
-  Use when: User wants a comprehensive code review of a pull request with automatic fixes.
+  Use when: 希望对一个 Pull Request 做全面 code review，并自动修掉发现的问题。
   Triggers: "review this PR", "review PR #123", "comprehensive review", "full PR review",
             "review and fix", "check this PR", "code review".
-  Does: Syncs PR with main (rebase if needed) -> runs 5 specialized review agents in parallel ->
-        synthesizes findings -> auto-fixes CRITICAL/HIGH issues -> reports remaining issues.
-  NOT for: Quick questions about a PR, checking CI status, simple "what changed" queries.
+  Does: 把 PR 与 main 同步（必要时 rebase）→ 并行跑 5 个专项 review agent →
+        汇总发现 → 自动修复 CRITICAL / HIGH 级别问题 → 报告剩余问题。
+  NOT for: 对 PR 的简短问询、查看 CI 状态、简单的"改了什么"询问。
 
-  This workflow produces artifacts in $ARTIFACTS_DIR/../reviews/pr-{number}/ and posts
-  a comprehensive review comment to the GitHub PR.
+  产物保存在 $ARTIFACTS_DIR/../reviews/pr-{number}/，并在 GitHub PR 上发表
+  一条完整的 review 评论。
 
 nodes:
   - id: scope

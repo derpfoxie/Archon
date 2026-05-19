@@ -1,10 +1,10 @@
 name: archon-workflow-builder
 description: |
-  Use when: User wants to create a new custom workflow for their project.
+  Use when: 希望为项目创建新的自定义工作流。
   Triggers: "build me a workflow", "create a workflow", "generate a workflow",
             "new workflow", "make a workflow for", "workflow builder".
-  Does: Scans codebase -> extracts intent (JSON) -> generates YAML -> validates -> saves.
-  NOT for: Editing existing workflows or creating non-workflow files.
+  Does: 扫描代码库 → 提取意图（JSON）→ 生成 YAML → 校验 → 保存。
+  NOT for: 编辑现有工作流或创建非工作流文件。
 
 nodes:
   - id: scan-codebase

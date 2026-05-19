@@ -1,25 +1,25 @@
 name: archon-idea-to-pr
 description: |
-  Use when: You have a feature idea or description and want end-to-end development.
-  Input: Feature description in natural language, or path to a PRD file
-  Output: PR ready for merge with comprehensive review completed
+  Use when: 有一个功能想法或描述，希望进行端到端开发。
+  Input: 自然语言的功能描述，或 PRD 文件路径
+  Output: 准备合并的 PR，已完成全面 review
 
-  Full workflow:
-  1. Create comprehensive implementation plan with codebase analysis
-  2. Setup branch and extract scope limits
-  3. Verify plan research is still valid
-  4. Implement all tasks with type-checking
-  5. Run full validation suite
-  6. Create PR with template, mark ready
-  7. Comprehensive code review (5 parallel agents with scope limit awareness)
-  8. Synthesize and fix review findings
-  9. Final summary with decision matrix -> GitHub comment + follow-up recommendations
+  完整工作流：
+  1. 创建包含代码库分析的全面实现计划
+  2. 设置分支并提取范围限制
+  3. 验证计划调研仍然有效
+  4. 带类型检查地实现所有任务
+  5. 运行完整校验套件
+  6. 用模板创建 PR，标记为 ready
+  7. 全面 code review（5 个并行 agent，带范围限制感知）
+  8. 综合并修复 review 发现
+  9. 最终总结与决策矩阵 → GitHub 评论 + 后续建议
 
-  NOT for: Executing existing plans (use archon-plan-to-pr), quick fixes, standalone reviews.
+  NOT for: 执行现有计划（请用 archon-plan-to-pr）、快速修复、独立 review。
 
 nodes:
   # ═══════════════════════════════════════════════════════════════════
-  # PHASE 0: CREATE PLAN
+  # 阶段 0：创建计划
   # ═══════════════════════════════════════════════════════════════════
 
   - id: create-plan
@@ -27,7 +27,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════════
-  # PHASE 1: SETUP
+  # 阶段 1：设置
   # ═══════════════════════════════════════════════════════════════════
 
   - id: plan-setup
@@ -36,7 +36,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════════
-  # PHASE 2: CONFIRM PLAN
+  # 阶段 2：确认计划
   # ═══════════════════════════════════════════════════════════════════
 
   - id: confirm-plan
@@ -45,7 +45,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════════
-  # PHASE 3: IMPLEMENT
+  # 阶段 3：实现
   # ═══════════════════════════════════════════════════════════════════
 
   - id: implement-tasks
@@ -56,7 +56,7 @@ nodes:
     model: opus[1m]
 
   # ═══════════════════════════════════════════════════════════════════
-  # PHASE 4: VALIDATE
+  # 阶段 4：校验
   # ═══════════════════════════════════════════════════════════════════
 
   - id: validate
@@ -65,7 +65,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════════
-  # PHASE 5: FINALIZE PR
+  # 阶段 5：完成 PR
   # ═══════════════════════════════════════════════════════════════════
 
   - id: finalize-pr
@@ -74,7 +74,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════════
-  # PHASE 6: CODE REVIEW
+  # 阶段 6：Code Review
   # ═══════════════════════════════════════════════════════════════════
 
   - id: verify-pr-base
@@ -133,7 +133,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════════
-  # PHASE 7: FIX REVIEW ISSUES
+  # 阶段 7：修复 Review 问题
   # ═══════════════════════════════════════════════════════════════════
 
   - id: implement-fixes
@@ -142,7 +142,7 @@ nodes:
     context: fresh
 
   # ═══════════════════════════════════════════════════════════════════
-  # PHASE 8: FINAL SUMMARY & FOLLOW-UP
+  # 阶段 8：最终总结 & 后续
   # ═══════════════════════════════════════════════════════════════════
 
   - id: workflow-summary
